@@ -1,0 +1,32 @@
+:sectlinks:
+:sectanchors:
+:stylesheet: asciidoctor.css
+// If not rendered on github, we use fonts for the captions, otherwise, we assign github emojis. DO NOT PUT A BLANK LINE BEFORE THIS, the ICONS don't render.
+ifndef::env-github[]
+:icons: font
+endif::[]
+ifdef::env-github[]
+:important-caption: :exclamation:
+:warning-caption: :x:
+:caution-caption: :hand:
+:note-caption: :bulb:
+:tip-caption: :mag:
+endif::[]
+
+# Overview
+
+This is a sandbox environment for experimenting with Spring reactive programming to implement a poker server for use as a "remote" home game. Our poker group has been forced recently to move our home game online due to social distancing. There are surprisingly few choices out there to manage a private cash or tournament game. This project is an attempt to scratch that itch while giving us an excuse to study reactor and RSocket. The plan is to implement a server first and then build (or recruit someone to build) a client using something like React or Angular?
+
+## TODO
+
+- Build out a domain primititve for a deck of cards.
+- Implement a poker hand ranking algorithm. It doesn't need to be the fastest thing in the world and will favor maintainability over performance. The ranking algorithm should be flexible enough to handle 5, 7 (Texas Hold'em) and 8 (Big O) card hands. We will focus on Texas Hold'em first.
+- Build a domain model for a table, players and events.
+- Domain model for a game (which is a specific event and will have n number of players and a variable number of tables.) Need to support both cash game and tournaments, have a lobby, chip stacks, blinds, and payouts
+- Build basic user authentication and management.
+- Game manager functionality (pause game, add/move players, etc)
+- RSocket connectivity
+- Persistence
+- Chat
+
+## Done
