@@ -132,7 +132,7 @@ public class PokerRanker {
 								if (result == null) {
 									result = isTwoPair(clubs, hearts, diamonds, spades);
 									if (result == null) {
-										isPair(clubs, hearts, diamonds, spades);
+										result = isPair(clubs, hearts, diamonds, spades);
 										if (result == null) {
 											List<CardValue> cardValues = getHighestCardValues((clubs | hearts | diamonds | spades), 5); 
 											result = new HandResult(HandRank.HIGH_CARD, cardValues);
