@@ -2,13 +2,19 @@ package org.homepoker.common;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.homepoker.common.PokerUtilities.parseCards;
+import static org.junit.jupiter.api.Assertions.assertTimeout;
 
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.homepoker.common.ranker.BitwisePokerRanker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class PokerRankerTests {
+public class ClassicPokerRankerTests {
 	
-	PokerRanker ranker = new PokerRanker();
+	ClassicPokerRanker ranker = new BitwisePokerRanker();
 	
 	@Test
 	@DisplayName("Test Five Card Hand Results") 
@@ -96,14 +102,48 @@ public class PokerRankerTests {
 		assertThat(result.getRank()).isEqualTo(HandRank.PAIR);
 		assertThat(result.getCardValues()).containsExactly(CardValue.THREE, CardValue.THREE,  CardValue.ACE, CardValue.KING, CardValue.QUEEN);
 
-
 		result = ranker.rankHand(parseCards("2D 8H QS 4D AC KC 3C"));
 		assertThat(result.getRank()).isEqualTo(HandRank.HIGH_CARD);
 		assertThat(result.getCardValues()).containsExactly(CardValue.ACE, CardValue.KING,  CardValue.QUEEN, CardValue.EIGHT, CardValue.FOUR);
 		
+		//A couple of edge cases
+		//Two three pair should be a full house.
+		result = ranker.rankHand(parseCards("4H 4S TD 9D 9C 4D 9H"));
+		assertThat(result.getRank()).isEqualTo(HandRank.FULL_HOUSE);
+		assertThat(result.getCardValues()).containsExactly(CardValue.NINE, CardValue.NINE,  CardValue.NINE, CardValue.FOUR, CardValue.FOUR);
+
+		//Low straight flush when all cards are in the same suit.
+		result = ranker.rankHand(parseCards("5C 3C 2C 9C 4C JC AC"));
+		assertThat(result.getRank()).isEqualTo(HandRank.STRAIGHT_FLUSH);
+		assertThat(result.getCardValues()).containsExactly(CardValue.FIVE, CardValue.FOUR,  CardValue.THREE, CardValue.TWO, CardValue.ACE);
+		
 	}
 	
 
+	
+	@Test
+	@DisplayName("Test ranking performance") 
+	public void testSevenCardHandRankingPerformance() {
+
+		//Test that the poker ranker can deal and rank 100,000 hands with 7 players per hand.
+		//The ranker should easily accomplish this under 1.2 seconds.
+		assertTimeout(Duration.ofMillis(1200), () -> 
+		{
+			int numberOfHands = 100_000;
+			int numberOfPlayers = 7;
+			//Texas hold'em rules 5 community cards + 2 for each player (7 players) (over 10 rounds)
+			for (int index =0; index < numberOfHands; index++) {
+				Deck deck = new Deck();
+				List<Card> communityCards = deck.drawCards(5);
+				for (int playerIndex = 0; playerIndex < numberOfPlayers; playerIndex++) {
+					List<Card> playerHand = deck.drawCards(2);
+					List<Card> combined = new ArrayList<> (playerHand);
+					combined.addAll(communityCards);
+					ranker.rankHand(combined);
+				}
+			}
+		});
+	}
 	
 	
 }
