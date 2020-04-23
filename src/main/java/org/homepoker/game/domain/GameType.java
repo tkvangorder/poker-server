@@ -1,4 +1,4 @@
-package org.homepoker.game;
+package org.homepoker.game.domain;
 
 /**
  * The type of poker game is currently limited to only Texas Hold'em. This may be expanded in the future.

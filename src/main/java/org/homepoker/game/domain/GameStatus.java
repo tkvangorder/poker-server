@@ -1,4 +1,4 @@
-package org.homepoker.game;
+package org.homepoker.game.domain;
 
 /**
  * Enumeration for the status of a game.

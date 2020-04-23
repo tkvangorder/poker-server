@@ -1,4 +1,4 @@
-package org.homepoker.game;
+package org.homepoker.game.domain;
 
 import java.util.Date;
 import java.util.List;
@@ -68,13 +68,15 @@ public class Game {
 	 */
 	private List<Player> lobby;
 
+
+	//NOTE: We are avoiding polymorphism here. The current blind level will always
 	/**
 	 * The current blinds for the game
 	 */
 	private Blinds blinds;
 
 	/**
-	 * The blind schedule when the format of the game is  {@link GameFormat#TOURNAMENT}
+	 * The blind schedule when the format of the game is {@link GameFormat#TOURNAMENT}
 	 */
 	private BlindSchedule blindSchedule;
 

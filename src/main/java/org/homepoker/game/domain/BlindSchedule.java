@@ -1,6 +1,6 @@
-package org.homepoker.game;
+package org.homepoker.game.domain;
 
-import java.util.List;
+import org.homepoker.game.GameUtilities;
 
 import lombok.Data;
 
@@ -12,6 +12,11 @@ import lombok.Data;
 @Data
 public class BlindSchedule {
 	private final int blindIntervalMinutes;
-	private final List<Blinds> blindLevels;
+	private final int blindLevelFactor;
 	private int currentBlindLevel = 0;
+
+	public Blinds getBlinds() {
+		int bigBlind = GameUtilities.computeBigBlindAtLevel(currentBlindLevel, blindLevelFactor);
+		return new Blinds(bigBlind/2, bigBlind);
+	}
 }
