@@ -122,9 +122,9 @@ public class BlindScheduleBuilder {
 		int blindLevelFactor = GameUtilities.computeBlindLevelFactor(estimatedTotalChips, numberofIntervals);
 
 		//Precompute the blind levels.
-		List<Blinds> blindLevels = new ArrayList<>(numberofIntervals);
-		for (int index = 0; index < numberofIntervals; index++) {
-			int bigBlind = GameUtilities.computeBigBlindAtLevel(index + 1, blindLevelFactor);
+		List<Blinds> blindLevels = new ArrayList<>(numberofIntervals + 1);
+		for (int index = 0; index < (numberofIntervals + (numberofIntervals /2)) ; index++) {
+			int bigBlind = GameUtilities.computeBigBlindAtLevel(index, blindLevelFactor);
 			blindLevels.add(new Blinds(bigBlind/2, bigBlind));
 		}
 

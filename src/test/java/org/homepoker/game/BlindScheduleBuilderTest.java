@@ -1,6 +1,5 @@
 package org.homepoker.game;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.homepoker.game.BlindScheduleBuilder.blindSchedule;
 
 import org.homepoker.game.domain.BlindSchedule;
@@ -14,14 +13,14 @@ public class BlindScheduleBuilderTest {
 	@DisplayName("Test the defaults for the blind schedule builder.")
 	public void testDefaultBlindSchedule() {
 		BlindSchedule schedule = blindSchedule()
-				.numberOfPlayers(25)
-				.tournamentLengthHours(4)
+				.numberOfPlayers(7)
+				.tournamentLengthHours(3)
 				.build();
 
-		assertThat(schedule.getBlindLevels()).hasSize(12);
-
+		int index = 0;
 		for (Blinds blinds : schedule.getBlindLevels()) {
-			System.out.println("Small Blind : " + blinds.getSmallBlind() + " - Big Blind : " + blinds.getBigBlind());
+			System.out.println((index + 1) + " - Small Blind : " + blinds.getSmallBlind() + " - Big Blind : " + blinds.getBigBlind());
+			index++;
 		}
 	}
 }

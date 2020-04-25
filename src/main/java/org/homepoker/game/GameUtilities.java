@@ -43,12 +43,23 @@ public class GameUtilities {
 	 * @return The value of the big blind.
 	 */
 	public static int computeBigBlindAtLevel(int level, int blindLevelFactor) {
-		int bigBlind = roundToBigBlind((int) (blindLevelFactor * Math.pow(1.8, level)));
-		if (bigBlind < 50) {
+		if (level == 0) {
+			//initial big blind is always 50.
 			return 50;
-		} else {
-			return bigBlind;
+		} else if (level == 1) {
+			return 100;
+		} else if (level == 2) {
+			return 200;
 		}
+
+		int bigBlind = roundToBigBlind((int) (blindLevelFactor * Math.pow(1.5, level)));
+
+		while (bigBlind < 200) {
+			level++;
+			bigBlind = roundToBigBlind((int) (blindLevelFactor * Math.pow(1.5, level)));
+		}
+
+		return bigBlind;
 	}
 
 	/**
