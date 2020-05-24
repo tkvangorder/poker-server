@@ -19,7 +19,7 @@ public class Game {
 	/**
 	 * Unique Id of the game.
 	 */
-	private Long id;
+	private String id;
 
 	/**
 	 * A human readable name for the game.
@@ -40,6 +40,17 @@ public class Game {
 	 * Current status of the game (useful when persisting the game to storage)
 	 */
 	private GameStatus status;
+
+	//NOTE: We are avoiding polymorphism here. The current blind level is always recorded with the game.
+	/**
+	 * The current blinds for the game
+	 */
+	private Blinds blinds;
+
+	/**
+	 * The blind schedule when the format of the game is {@link GameFormat#TOURNAMENT}
+	 */
+	private BlindSchedule blindSchedule;
 
 	/**
 	 * The scheduled/actual start time of the game.
@@ -67,18 +78,5 @@ public class Game {
 	 * Users/players
 	 */
 	private List<Player> lobby;
-
-
-	//NOTE: We are avoiding polymorphism here. The current blind level will always
-	/**
-	 * The current blinds for the game
-	 */
-	private Blinds blinds;
-
-	/**
-	 * The blind schedule when the format of the game is {@link GameFormat#TOURNAMENT}
-	 */
-	private BlindSchedule blindSchedule;
-
 
 }

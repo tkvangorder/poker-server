@@ -1,4 +1,4 @@
-package org.homepoker.common;
+package org.homepoker.poker.domain;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class Deck {
 
-	final List<Card> cards = new LinkedList<>();
+	private final List<Card> cards = new LinkedList<>();
 
 	public Deck() {
 		for (CardSuit suit : CardSuit.values()) {
@@ -27,7 +27,7 @@ public class Deck {
 		Collections.shuffle(cards);
 	}
 
-	List<Card> drawCards(int numberOfCards) {
+	public List<Card> drawCards(int numberOfCards) {
 		List<Card> drawnCards = new ArrayList<>(numberOfCards);
 		for (int index = 0; index < numberOfCards; index++) {
 			drawnCards.add(cards.remove(0));

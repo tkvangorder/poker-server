@@ -1,6 +1,6 @@
 package org.homepoker.game.domain;
 
-import org.homepoker.user.User;
+import org.homepoker.user.domain.User;
 
 import lombok.Data;
 

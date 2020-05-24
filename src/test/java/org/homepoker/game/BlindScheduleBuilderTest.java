@@ -13,8 +13,8 @@ public class BlindScheduleBuilderTest {
 	@DisplayName("Test the defaults for the blind schedule builder.")
 	public void testDefaultBlindSchedule() {
 		BlindSchedule schedule = blindSchedule()
-				.numberOfPlayers(7)
-				.tournamentLengthHours(3)
+				.numberOfPlayers(24)
+				.tournamentLengthHours(4)
 				.build();
 
 		int index = 0;

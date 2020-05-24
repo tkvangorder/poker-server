@@ -16,10 +16,16 @@ import lombok.Data;
  */
 @Data
 public class BlindSchedule {
+
 	private final int blindIntervalMinutes;
 	private final int blindLevelFactor;
 	private List<Blinds> blindLevels;
 	private int currentBlindLevel = 0;
+
+	/**
+	 * Only used when pausing or persisting a tournament game.
+	 */
+	private int secondsUntilNextBlind= 0;
 
 	public BlindSchedule(List<Blinds> blindLevels, int blindIntervalMinutes, int blindLevelFactor) {
 		Assert.notNull(blindLevels, "You must provide the blind levels.");
@@ -37,6 +43,5 @@ public class BlindSchedule {
 			int bigBlind = GameUtilities.computeBigBlindAtLevel(currentBlindLevel + 1, blindLevelFactor);
 			return new Blinds(bigBlind/2, bigBlind);
 		}
-
 	}
 }

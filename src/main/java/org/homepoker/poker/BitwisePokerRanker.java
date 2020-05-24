@@ -1,15 +1,14 @@
-package org.homepoker.common.ranker;
+package org.homepoker.poker;
 
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.homepoker.common.Card;
-import org.homepoker.common.CardValue;
-import org.homepoker.common.ClassicPokerRanker;
-import org.homepoker.common.HandRank;
-import org.homepoker.common.HandResult;
+import org.homepoker.poker.domain.Card;
+import org.homepoker.poker.domain.CardValue;
+import org.homepoker.poker.domain.HandRank;
+import org.homepoker.poker.domain.HandResult;
 
 public class BitwisePokerRanker implements ClassicPokerRanker {
 

@@ -1,14 +1,20 @@
 package org.homepoker.common;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.homepoker.common.PokerUtilities.parseCards;
+import static org.homepoker.poker.PokerUtilities.parseCards;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.homepoker.common.ranker.BitwisePokerRanker;
+import org.homepoker.poker.BitwisePokerRanker;
+import org.homepoker.poker.ClassicPokerRanker;
+import org.homepoker.poker.domain.Card;
+import org.homepoker.poker.domain.CardValue;
+import org.homepoker.poker.domain.Deck;
+import org.homepoker.poker.domain.HandRank;
+import org.homepoker.poker.domain.HandResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

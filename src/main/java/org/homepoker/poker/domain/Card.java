@@ -1,4 +1,4 @@
-package org.homepoker.common;
+package org.homepoker.poker.domain;
 
 import lombok.Value;
 

@@ -1,14 +1,20 @@
-package org.homepoker.user;
+package org.homepoker.user.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class User {
 
 	/**
 	 * Internally assigned unique key used for persistence.
 	 */
-	Integer id;
+	String id;
 
 	/**
 	 * User's email, also used as the login ID.

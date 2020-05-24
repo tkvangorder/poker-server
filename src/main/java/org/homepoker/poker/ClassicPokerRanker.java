@@ -1,7 +1,12 @@
-package org.homepoker.common;
+package org.homepoker.poker;
 
 
 import java.util.List;
+
+import org.homepoker.poker.domain.Card;
+import org.homepoker.poker.domain.CardValue;
+import org.homepoker.poker.domain.HandRank;
+import org.homepoker.poker.domain.HandResult;
 
 /**
  * This interface defines the contract for ranking an arbitrary set of cards and returning a {@link HandResult} to represent the
