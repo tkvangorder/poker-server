@@ -1,5 +1,10 @@
 package org.homepoker.common;
 
-public enum Command {
-	FIND_GAMES;
+import lombok.Value;
+
+@Value
+public class Command {
+
+	private CommandId commandId;
+	private String payload;
 }

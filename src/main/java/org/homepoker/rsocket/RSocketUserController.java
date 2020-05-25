@@ -1,8 +1,8 @@
 package org.homepoker.rsocket;
 
-import org.homepoker.common.CommandMessage;
 import org.homepoker.common.Event;
-import org.homepoker.game.ClientManager;
+import org.homepoker.common.InvalidGameException;
+import org.homepoker.game.GameManager;
 import org.homepoker.game.GameServer;
 import org.homepoker.user.domain.User;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -15,11 +15,9 @@ import reactor.core.publisher.Flux;
 @Controller
 public class RSocketUserController {
 
-	private final ClientManager clientManager;
 	private final GameServer gameServer;
 	
-	public RSocketUserController(ClientManager clientManager, GameServer gameServer) {
-		this.clientManager = clientManager;
+	public RSocketUserController(GameServer gameServer) {
 		this.gameServer = gameServer;
 	}
 
@@ -27,22 +25,40 @@ public class RSocketUserController {
 	User createUser(User user) {
 		return null;
 	}
-	
-	@MessageMapping("client-channel")
-	Flux<Event> clientChannel(final Flux<CommandMessage> commandStream) {
+
+	@MessageMapping("game-command")
+	void gameCommand(GameCommand command) {
 		//TODO resolve user via spring security principal
-		User user = User.builder()
-			.id("1")
-			.email("test@test.com")
-			.alias("Fred")
-			.name("Fred Jones")
-			.phone("123 123 1234")
-			.build();
+		User user = getUser();
+		getGameManager(command.getGameId()).submitUserCommand(user, command.getCommand());		
+	}
+	
+	@MessageMapping("game-connect")
+	Flux<Event> gameConnect(final String gameId) {
+		//TODO resolve user via spring security principal
+		User user = getUser();
+		//Create an RSocket game listener and register it with the game manager.
+		RSocketGameListener listener = new RSocketGameListener(user);
+		getGameManager(gameId).addGameListener(listener);
+		return listener.getEventStream();
 		
-		RSocketClientConnection client = new RSocketClientConnection(user, commandStream, clientManager, gameServer);
-		clientManager.registerClient(client);
-		return client.getEventStream();
-		
+	}
+
+	private GameManager getGameManager(String gameId) {
+		GameManager manager = gameServer.getGameManger(gameId);
+		if (manager == null) {
+			throw new InvalidGameException("The game ID [" + gameId + "] does not exist.");
+		}
+		return manager;
+	}
+	private User getUser() {
+		return User.builder()
+				.id("1")
+				.email("test@test.com")
+				.alias("Fred")
+				.name("Fred Jones")
+				.phone("123 123 1234")
+				.build();
 	}
 	
 }

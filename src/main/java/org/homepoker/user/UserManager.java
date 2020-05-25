@@ -13,7 +13,13 @@ public interface UserManager {
 	 * @return
 	 */
 	User createUser(User user);
-	
+
+	/**
+	 * Update an existing user
+	 * @param user
+	 * @return
+	 */
+	User updateUser(User user);
 	/**
 	 * Find existing users
 	 * 
