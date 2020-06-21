@@ -33,7 +33,7 @@ public interface ClassicPokerRanker {
 	 * <li>{@link HandRank#HIGH_CARD}</li>
 	 * <P>
 	 * 
-	 * The list of {@link CardValue} where the CardValues are sorted using a poker lexicoghraphical order (poker alphabet) where
+	 * The list of {@link CardValue} where the CardValues are sorted using a poker lexioghraphical order (poker alphabet) where
 	 * the most significant CardValue is first and the least significant card is last. If more than five cards are passed into this
 	 * method, the two least significant cards will be discarded. 
 	 * 

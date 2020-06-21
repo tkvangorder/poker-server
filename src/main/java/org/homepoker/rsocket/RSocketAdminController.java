@@ -1,11 +1,7 @@
 package org.homepoker.rsocket;
 
-import java.util.List;
-
-import org.homepoker.game.GameManager;
 import org.homepoker.game.GameServer;
 import org.homepoker.game.domain.Game;
-import org.homepoker.game.domain.GameCriteria;
 import org.homepoker.user.UserManager;
 import org.springframework.stereotype.Controller;
 
@@ -20,14 +16,6 @@ public class RSocketAdminController {
 		this.userManager = userManager;
 	}
 	
-	List<Game> findGames(GameCriteria criteria) {
-		return gameServer.findGames(criteria);
-		
-	}
-	GameManager getGameManger(String gameId) {
-		return gameServer.getGameManger(gameId);
-	}
-
 	Game createGame(Game game) {
 		return gameServer.createGame(game);
 	}
