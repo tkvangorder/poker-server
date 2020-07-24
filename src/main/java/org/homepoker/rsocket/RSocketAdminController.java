@@ -5,6 +5,8 @@ import org.homepoker.game.domain.Game;
 import org.homepoker.game.domain.GameConfiguration;
 import org.springframework.stereotype.Controller;
 
+import reactor.core.publisher.Mono;
+
 @Controller
 public class RSocketAdminController {
 
@@ -14,14 +16,14 @@ public class RSocketAdminController {
 		this.gameServer = gameServer;
 	}
 	
-	Game createGame(GameConfiguration configuration) {
+	Mono<Game> createGame(GameConfiguration configuration) {
 		return gameServer.createGame(configuration);
 	}
 
-	Game updateGame(GameConfiguration configuration) { 
+	Mono<Game> updateGame(GameConfiguration configuration) { 
 		return gameServer.updateGame(configuration);		
 	}
-	void deleteGame(String gameId) {
-		gameServer.deleteGame(gameId);
+	Mono<Void> deleteGame(String gameId) {
+		return gameServer.deleteGame(gameId);
 	}	
 }
