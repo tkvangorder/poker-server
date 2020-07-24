@@ -2,7 +2,7 @@ package org.homepoker.game.domain;
 
 public class TournamentGame extends Game {
 	
-	private int blindIntervalMinutes;
+	private int blindIntervalMinutes = 15;
 	private int secondsUntilNextBlind = 0;
 
 	/**
@@ -18,7 +18,7 @@ public class TournamentGame extends Game {
 	/**
 	 * The amount of chips given for a re-buy.
 	 */
-	private int rebuyAmount = 0;
+	private int rebuyChipAmount = 0;
 	
 	/**
 	 * Does this game allow add-ons?
@@ -28,7 +28,7 @@ public class TournamentGame extends Game {
 	/**
 	 * The amount of chips given if a player elects to add-on.
 	 */
-	private int addOnAmount = 0;
+	private int addOnChipAmount = 0;
 
 	/**
 	 * The blind schedule for the tournament. The schedule will not be defined until the tournament has started because it
@@ -78,12 +78,12 @@ public class TournamentGame extends Game {
 		this.numberOfRebuys = numberOfRebuys;
 	}
 
-	public int getRebuyAmount() {
-		return rebuyAmount;
+	public int getRebuyChipAmount() {
+		return rebuyChipAmount;
 	}
 
-	public void setRebuyAmount(int rebuyAmount) {
-		this.rebuyAmount = rebuyAmount;
+	public void setRebuyChipAmount(int rebuyAmount) {
+		this.rebuyChipAmount = rebuyAmount;
 	}
 
 	public boolean isAddOnAllowed() {
@@ -94,12 +94,12 @@ public class TournamentGame extends Game {
 		this.addOnAllowed = addOnAllowed;
 	}
 
-	public int getAddOnAmount() {
-		return addOnAmount;
+	public int getAddOnChipAmount() {
+		return addOnChipAmount;
 	}
 
-	public void setAddOnAmount(int addOnAmount) {
-		this.addOnAmount = addOnAmount;
+	public void setAddOnChipAmount(int addOnAmount) {
+		this.addOnChipAmount = addOnAmount;
 	}
 
 	public BlindSchedule getBlindSchedule() {

@@ -36,7 +36,7 @@ public abstract class Game {
 	/**
 	 * The scheduled/actual start time of the game.
 	 */
-	private Date startTime;
+	private Date startTimestamp;
 
 	/**
 	 * The end time is used only when persisting a game once it is over or has been ended

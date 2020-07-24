@@ -28,7 +28,7 @@ public abstract class GameConfiguration {
 	 * This is a simple enumeration for the format: CASH or TOURNAMENT 
 	 * @return The game format.
 	 */
-	private GameFormat getGameFormat;
+	private GameFormat gameFormat;
 
 	/**
 	 * What type of poker game? Texas Hold'em, Draw, etc.
@@ -38,12 +38,12 @@ public abstract class GameConfiguration {
 	/**
 	 * The scheduled/actual start time of the game.
 	 */
-	private Date startTime;
+	private Date startTimestamp;
 
 	/**
 	 * The number of chips each player will start with.
 	 */
-	private int startingStack;
+	private Integer startingChipStack;
 	
 	/**
 	 * User that created/owns the game.
@@ -53,40 +53,40 @@ public abstract class GameConfiguration {
 	/**
 	 * If the game format is CASH, this is the small blind for the game.
 	 */
-	private int smallBlind;
+	private Integer smallBlind;
 	
 	/**
 	 * If the game format is CASH, this is the big blind for the game.
 	 */
-	private int bigBlind;
+	private Integer bigBlind;
 
 	// The rest of the attributes in this class are for defining parameter for a tournament.
 
 	/**
 	 * The time interval where the blinds go "up"
 	 */
-	private int blindIntervalMinutes;
+	private Integer blindIntervalMinutes;
 
 	/**
 	 * The estimated time that the tournament should end. This is used when calculating the blind schedule
 	 * along with the number of players and chips in play.
 	 */
-	private int estimatedTournamentLengthHours;
+	private Integer estimatedTournamentLengthHours;
 	
 	/**
 	 * The level at which re-buys are no longer allows and when an add-on may be applied.
 	 */
-	private int cliffLevel = 3;
+	private Integer cliffLevel = 3;
 
 	/**
 	 * Number of allowed rebuys for each player.
 	 */
-	private int numberOfRebuys = 0;
+	private Integer numberOfRebuys = 0;
 	
 	/**
 	 * The amount of chips given for a re-buy.
 	 */
-	private int rebuyAmount = 0;
+	private Integer rebuyChipAmount = 0;
 	
 	/**
 	 * Does this game allow add-ons?
@@ -96,6 +96,6 @@ public abstract class GameConfiguration {
 	/**
 	 * The amount of chips given if a player elects to add-on.
 	 */
-	private int addOnAmount = 0;
+	private Integer addOnChipAmount = 0;
 
 }
