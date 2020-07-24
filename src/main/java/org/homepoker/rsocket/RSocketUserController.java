@@ -1,7 +1,5 @@
 package org.homepoker.rsocket;
 
-import java.util.List;
-
 import org.homepoker.common.Event;
 import org.homepoker.common.InvalidGameException;
 import org.homepoker.game.GameManager;
@@ -31,7 +29,7 @@ public class RSocketUserController {
 	}
 
 	@MessageMapping("find-games")
-	List<Game> findGames(GameCriteria criteria) {
+	Flux<Game> findGames(GameCriteria criteria) {
 		return gameServer.findGames(criteria);
 	}
 
