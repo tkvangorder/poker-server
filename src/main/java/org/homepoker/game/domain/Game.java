@@ -3,6 +3,8 @@ package org.homepoker.game.domain;
 import java.util.Date;
 import java.util.List;
 
+import org.homepoker.user.domain.User;
+
 import lombok.Data;
 
 /**
@@ -14,7 +16,7 @@ import lombok.Data;
  *
  */
 @Data
-public class Game {
+public abstract class Game {
 
 	/**
 	 * Unique Id of the game.
@@ -27,30 +29,9 @@ public class Game {
 	private String name;
 
 	/**
-	 * The game format can be either cash or tournament.
-	 */
-	private GameFormat format;
-
-	/**
 	 * What type of poker game? Texas Hold'em, Draw, etc.
 	 */
 	private GameType type;
-
-	/**
-	 * Current status of the game (useful when persisting the game to storage)
-	 */
-	private GameStatus status;
-
-	//NOTE: We are avoiding polymorphism here. The current blind level is always recorded with the game.
-	/**
-	 * The current blinds for the game
-	 */
-	private Blinds blinds;
-
-	/**
-	 * The blind schedule when the format of the game is {@link GameFormat#TOURNAMENT}
-	 */
-	private BlindSchedule blindSchedule;
 
 	/**
 	 * The scheduled/actual start time of the game.
@@ -64,6 +45,21 @@ public class Game {
 	private Date endTime;
 
 	/**
+	 * The number of chips each player will start with.
+	 */
+	private int startingStack;
+	
+	/**
+	 * Current status of the game (useful when persisting the game to storage)
+	 */
+	private GameStatus status;
+
+	/**
+	 * User that created/owns the game.
+	 */
+	private User owner;
+
+	/**
 	 * The players registered/participating in the game.
 	 */
 	private List<Player> registeredPlayers;
@@ -75,8 +71,17 @@ public class Game {
 	private List<Table> tables;
 
 	/**
-	 * Users/players
+	 * This abstract method must be implemented by concrete implementations. A cash game will have a static blind schedule
+	 * and a tournament's blinds will change based on the blind schedule.
+	 * 
+	 * @return The current small/big blinds
 	 */
-	private List<Player> lobby;
+	public abstract Blinds getCurrentBlinds();
+	
+	/**
+	 * This is a simple enumeration for the format: CASH or TOURNAMENT 
+	 * @return The game format.
+	 */
+	public abstract GameFormat getGameFormat();
 
 }

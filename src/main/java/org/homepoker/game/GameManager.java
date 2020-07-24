@@ -16,7 +16,6 @@ public interface GameManager {
 	
 	Player registerPlayer(User user);
 	List<Player> getRegisteredPlayers();
-
 	
 	void addGameListener(GameListener listener);
 	void removeGameListener(GameListener listener);	
@@ -27,6 +26,4 @@ public interface GameManager {
 	
 	Game startGame();
 	Game pauseGame();
-
-	
 }

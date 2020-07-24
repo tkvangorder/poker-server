@@ -128,7 +128,7 @@ public class BlindScheduleBuilder {
 			blindLevels.add(new Blinds(bigBlind/2, bigBlind));
 		}
 
-		return new BlindSchedule(blindLevels, (int)blindInterval.toMinutes(), blindLevelFactor);
+		return new BlindSchedule(blindLevels, blindLevelFactor);
 	}
 
 }

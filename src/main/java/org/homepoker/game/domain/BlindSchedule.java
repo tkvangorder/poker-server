@@ -17,19 +17,12 @@ import lombok.Data;
 @Data
 public class BlindSchedule {
 
-	private final int blindIntervalMinutes;
 	private final int blindLevelFactor;
 	private List<Blinds> blindLevels;
 	private int currentBlindLevel = 0;
 
-	/**
-	 * Only used when pausing or persisting a tournament game.
-	 */
-	private int secondsUntilNextBlind= 0;
-
-	public BlindSchedule(List<Blinds> blindLevels, int blindIntervalMinutes, int blindLevelFactor) {
+	public BlindSchedule(List<Blinds> blindLevels, int blindLevelFactor) {
 		Assert.notNull(blindLevels, "You must provide the blind levels.");
-		this.blindIntervalMinutes = blindIntervalMinutes;
 		this.blindLevelFactor = blindLevelFactor;
 		this.blindLevels = blindLevels;
 	}
