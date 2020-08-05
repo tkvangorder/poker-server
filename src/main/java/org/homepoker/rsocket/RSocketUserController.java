@@ -7,25 +7,29 @@ import org.homepoker.domain.game.GameDetails;
 import org.homepoker.domain.user.User;
 import org.homepoker.game.GameManager;
 import org.homepoker.game.GameServer;
+import org.homepoker.user.UserManager;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Controller
 public class RSocketUserController {
 
 	private final GameServer gameServer;
+	private final UserManager userManager;
 	
-	public RSocketUserController(GameServer gameServer) {
+	public RSocketUserController(GameServer gameServer, UserManager userManager) {
 		this.gameServer = gameServer;
+		this.userManager = userManager;
 	}
 
 	@MessageMapping("create-user")
-	User createUser(User user) {
-		return null;
+	Mono<User> createUser(User user) {
+		return userManager.createUser(user);
 	}
 
 	@MessageMapping("find-games")

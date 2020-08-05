@@ -2,10 +2,12 @@ package org.homepoker.user;
 
 import org.homepoker.domain.user.User;
 import org.homepoker.domain.user.UserCriteria;
+import org.springframework.stereotype.Service;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Service
 public class UserManagerImpl implements UserManager {
 
 	UserRepository userRepository;
