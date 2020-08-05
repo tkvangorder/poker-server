@@ -1,4 +1,4 @@
-package org.homepoker.poker.domain;
+package org.homepoker.domain.poker;
 
 /**
  * This represents the hand rank from least significant (High Card) to most significant (Straight Flush). 

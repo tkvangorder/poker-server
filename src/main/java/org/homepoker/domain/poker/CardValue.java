@@ -1,4 +1,4 @@
-package org.homepoker.poker.domain;
+package org.homepoker.domain.poker;
 
 import java.util.HashMap;
 import java.util.Map;

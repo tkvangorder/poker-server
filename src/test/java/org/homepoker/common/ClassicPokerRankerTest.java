@@ -8,13 +8,13 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.homepoker.domain.poker.Card;
+import org.homepoker.domain.poker.CardValue;
+import org.homepoker.domain.poker.Deck;
+import org.homepoker.domain.poker.HandRank;
+import org.homepoker.domain.poker.HandResult;
 import org.homepoker.poker.BitwisePokerRanker;
 import org.homepoker.poker.ClassicPokerRanker;
-import org.homepoker.poker.domain.Card;
-import org.homepoker.poker.domain.CardValue;
-import org.homepoker.poker.domain.Deck;
-import org.homepoker.poker.domain.HandRank;
-import org.homepoker.poker.domain.HandResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

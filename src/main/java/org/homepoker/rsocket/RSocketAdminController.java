@@ -1,8 +1,8 @@
 package org.homepoker.rsocket;
 
+import org.homepoker.domain.game.GameDetails;
 import org.homepoker.game.GameServer;
-import org.homepoker.game.domain.Game;
-import org.homepoker.game.domain.GameConfiguration;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
 import reactor.core.publisher.Mono;
@@ -16,13 +16,17 @@ public class RSocketAdminController {
 		this.gameServer = gameServer;
 	}
 	
-	Mono<Game> createGame(GameConfiguration configuration) {
+	@MessageMapping("create-game")
+	Mono<GameDetails> createGame(GameDetails configuration) {
 		return gameServer.createGame(configuration);
 	}
 
-	Mono<Game> updateGame(GameConfiguration configuration) { 
+	@MessageMapping("update-game")
+	Mono<GameDetails> updateGame(GameDetails configuration) { 
 		return gameServer.updateGame(configuration);		
 	}
+
+	@MessageMapping("delete-game")
 	Mono<Void> deleteGame(String gameId) {
 		return gameServer.deleteGame(gameId);
 	}	

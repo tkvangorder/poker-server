@@ -3,9 +3,9 @@ package org.homepoker.poker;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.homepoker.poker.domain.Card;
-import org.homepoker.poker.domain.CardSuit;
-import org.homepoker.poker.domain.CardValue;
+import org.homepoker.domain.poker.Card;
+import org.homepoker.domain.poker.CardSuit;
+import org.homepoker.domain.poker.CardValue;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 

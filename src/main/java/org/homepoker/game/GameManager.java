@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.homepoker.common.Command;
-import org.homepoker.game.domain.Game;
-import org.homepoker.game.domain.Player;
-import org.homepoker.game.domain.Table;
-import org.homepoker.user.domain.User;
+import org.homepoker.domain.game.Game;
+import org.homepoker.domain.game.Player;
+import org.homepoker.domain.game.Table;
+import org.homepoker.domain.user.User;
 
 public interface GameManager {
 

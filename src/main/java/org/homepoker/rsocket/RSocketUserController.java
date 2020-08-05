@@ -2,11 +2,11 @@ package org.homepoker.rsocket;
 
 import org.homepoker.common.Event;
 import org.homepoker.common.InvalidGameException;
+import org.homepoker.domain.game.GameCriteria;
+import org.homepoker.domain.game.GameDetails;
+import org.homepoker.domain.user.User;
 import org.homepoker.game.GameManager;
 import org.homepoker.game.GameServer;
-import org.homepoker.game.domain.Game;
-import org.homepoker.game.domain.GameCriteria;
-import org.homepoker.user.domain.User;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
@@ -29,7 +29,7 @@ public class RSocketUserController {
 	}
 
 	@MessageMapping("find-games")
-	Flux<Game> findGames(GameCriteria criteria) {
+	Flux<GameDetails> findGames(GameCriteria criteria) {
 		return gameServer.findGames(criteria);
 	}
 

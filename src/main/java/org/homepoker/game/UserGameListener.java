@@ -1,6 +1,6 @@
 package org.homepoker.game;
 
-import org.homepoker.user.domain.User;
+import org.homepoker.domain.user.User;
 
 public interface UserGameListener extends GameListener {
 	public User getUser();	

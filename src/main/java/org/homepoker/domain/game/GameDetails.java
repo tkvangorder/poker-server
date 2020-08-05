@@ -1,9 +1,10 @@
-package org.homepoker.game.domain;
+package org.homepoker.domain.game;
 
 import java.util.Date;
 
-import org.homepoker.user.domain.User;
+import org.homepoker.domain.user.User;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -12,7 +13,8 @@ import lombok.Data;
  * @author tyler.vangorder
  */
 @Data
-public abstract class GameConfiguration {
+@Builder
+public class GameDetails {
 
 	/**
 	 * Unique Id of the game.
@@ -76,26 +78,55 @@ public abstract class GameConfiguration {
 	/**
 	 * The level at which re-buys are no longer allows and when an add-on may be applied.
 	 */
-	private Integer cliffLevel = 3;
+	private Integer cliffLevel;
 
 	/**
 	 * Number of allowed rebuys for each player.
 	 */
-	private Integer numberOfRebuys = 0;
+	private Integer numberOfRebuys;
 	
 	/**
 	 * The amount of chips given for a re-buy.
 	 */
-	private Integer rebuyChipAmount = 0;
+	private Integer rebuyChipAmount;
 	
 	/**
 	 * Does this game allow add-ons?
 	 */
-	private boolean addOnAllowed = false;
+	private boolean addOnAllowed;
 
 	/**
 	 * The amount of chips given if a player elects to add-on.
 	 */
-	private Integer addOnChipAmount = 0;
+	private Integer addOnChipAmount;
 
+	public static class GameDetailsBuilder {
+		public GameDetailsBuilder game(Game game) {
+			this.id = game.getId();
+			this.name = game.getName();
+
+			this.gameFormat = game.getGameFormat();
+			this.type = game.getType();
+			this.startTimestamp = game.getStartTimestamp();
+			this.startingChipStack = game.getStartingStack();
+			this.owner = game.getOwner();
+			if (game.getCurrentBlinds() != null) {
+				this.smallBlind = game.getCurrentBlinds().getSmallBlind();
+				this.bigBlind = game.getCurrentBlinds().getBigBlind();
+			}
+
+			// The rest of the attributes in this class are for defining parameter for a tournament.
+			if (game instanceof TournamentGame) {
+				TournamentGame tournamentGame = (TournamentGame)game; 
+				this.blindIntervalMinutes = tournamentGame.getBlindIntervalMinutes();
+				this.estimatedTournamentLengthHours = tournamentGame.getEstimatedTournamentLengthHours();
+				this.cliffLevel = tournamentGame.getCliffLevel();
+				this.numberOfRebuys = tournamentGame.getNumberOfRebuys();
+				this.rebuyChipAmount = tournamentGame.getRebuyChipAmount();
+				this.addOnAllowed = tournamentGame.isAddOnAllowed();
+				this.addOnChipAmount = tournamentGame.getAddOnChipAmount();
+			}
+			return this;
+		}
+	}
 }

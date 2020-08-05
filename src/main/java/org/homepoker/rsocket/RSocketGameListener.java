@@ -1,9 +1,9 @@
 package org.homepoker.rsocket;
 
 import org.homepoker.common.Event;
+import org.homepoker.domain.user.User;
 import org.homepoker.game.UserGameListener;
 import org.homepoker.game.event.GameEvent;
-import org.homepoker.user.domain.User;
 
 import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;

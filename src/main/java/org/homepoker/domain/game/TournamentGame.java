@@ -1,9 +1,14 @@
-package org.homepoker.game.domain;
+package org.homepoker.domain.game;
 
 public class TournamentGame extends Game {
 	
 	private int blindIntervalMinutes = 15;
 	private int secondsUntilNextBlind = 0;
+
+	/**
+	 * The estimated length of the tournament in hours.
+	 */
+	private int estimatedTournamentLengthHours = 3;
 
 	/**
 	 * The level at which rebuys are no longer allows and when an add-on may be applied.
@@ -60,6 +65,14 @@ public class TournamentGame extends Game {
 
 	public void setSecondsUntilNextBlind(int secondsUntilNextBlind) {
 		this.secondsUntilNextBlind = secondsUntilNextBlind;
+	}
+
+	public int getEstimatedTournamentLengthHours() {
+		return estimatedTournamentLengthHours;
+	}
+
+	public void setEstimatedTournamentLengthHours(int estimatedTournamentLengthHours) {
+		this.estimatedTournamentLengthHours = estimatedTournamentLengthHours;
 	}
 
 	public int getCliffLevel() {

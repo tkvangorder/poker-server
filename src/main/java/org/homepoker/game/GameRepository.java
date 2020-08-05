@@ -1,6 +1,6 @@
 package org.homepoker.game;
 
-import org.homepoker.game.domain.Game;
+import org.homepoker.domain.game.Game;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
 

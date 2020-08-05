@@ -1,9 +1,9 @@
-package org.homepoker.game.domain;
+package org.homepoker.domain.game;
 
 import java.util.Date;
 import java.util.List;
 
-import org.homepoker.user.domain.User;
+import org.homepoker.domain.user.User;
 
 import lombok.Data;
 

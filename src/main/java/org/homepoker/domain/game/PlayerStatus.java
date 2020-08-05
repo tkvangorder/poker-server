@@ -1,4 +1,4 @@
-package org.homepoker.game.domain;
+package org.homepoker.domain.game;
 
 /**
  * The current status of a player within the context of a game.

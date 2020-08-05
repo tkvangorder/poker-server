@@ -1,12 +1,12 @@
 package org.homepoker.game;
 
-import org.homepoker.game.domain.Blinds;
-import org.homepoker.game.domain.CashGame;
-import org.homepoker.game.domain.Game;
-import org.homepoker.game.domain.GameConfiguration;
-import org.homepoker.game.domain.GameCriteria;
-import org.homepoker.game.domain.GameFormat;
-import org.homepoker.game.domain.TournamentGame;
+import org.homepoker.domain.game.Blinds;
+import org.homepoker.domain.game.CashGame;
+import org.homepoker.domain.game.Game;
+import org.homepoker.domain.game.GameCriteria;
+import org.homepoker.domain.game.GameDetails;
+import org.homepoker.domain.game.GameFormat;
+import org.homepoker.domain.game.TournamentGame;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -19,9 +19,8 @@ public class GameServerImpl implements GameServer {
 	GameRepository gameRepository;
 	
 	@Override
-	public Flux<Game> findGames(GameCriteria criteria) {
-		
-		return gameRepository.findAll();
+	public Flux<GameDetails> findGames(GameCriteria criteria) {
+		return gameRepository.findAll().map(GameServerImpl::gameToGameDetails);
 	}
 
 	@Override
@@ -31,65 +30,75 @@ public class GameServerImpl implements GameServer {
 	}
 
 	@Override
-	public Mono<Game> createGame(GameConfiguration configuration) {
-		Assert.notNull(configuration, "The game configuration is required.");
-		Assert.notNull(configuration.getName(), "The name is required when creating a game.");
-		Assert.notNull(configuration.getGameFormat(), "The game format is required when creating a game.");
-		Assert.notNull(configuration.getType(), "The game type is required when creating a game.");
-		Assert.notNull(configuration.getStartTimestamp(), "The start date/time is required when creating a game.");
-		Assert.notNull(configuration.getStartingChipStack(), "The starting chip stack size is required when creating a game.");
-		Assert.notNull(configuration.getOwner(), "The game owner is required when creating a game.");
+	public Mono<GameDetails> createGame(GameDetails gameDetails) {
+		Assert.notNull(gameDetails, "The game configuration is required.");
+		Assert.notNull(gameDetails.getName(), "The name is required when creating a game.");
+		Assert.notNull(gameDetails.getGameFormat(), "The game format is required when creating a game.");
+		Assert.notNull(gameDetails.getType(), "The game type is required when creating a game.");
+		Assert.notNull(gameDetails.getStartTimestamp(), "The start date/time is required when creating a game.");
+		Assert.notNull(gameDetails.getStartingChipStack(), "The starting chip stack size is required when creating a game.");
+		Assert.notNull(gameDetails.getOwner(), "The game owner is required when creating a game.");
 		
 		
-		if (configuration.getGameFormat() == GameFormat.CASH) {
-			Assert.notNull(configuration.getSmallBlind(), "The small blind must be defined for a cash game.");
-			Assert.notNull(configuration.getBigBlind(), "The big blind must be defined for a cash game.");
-			CashGame game = new CashGame(new Blinds(configuration.getSmallBlind(), configuration.getSmallBlind()));
-			game.setName(configuration.getName());
-			game.setType(configuration.getType());
-			game.setStartTimestamp(configuration.getStartTimestamp());
-			game.setStartingStack(configuration.getStartingChipStack());
-			game.setOwner(configuration.getOwner());
-			return gameRepository.save(game);			
+		if (gameDetails.getGameFormat() == GameFormat.CASH) {
+			Assert.notNull(gameDetails.getSmallBlind(), "The small blind must be defined for a cash game.");
+			Assert.notNull(gameDetails.getBigBlind(), "The big blind must be defined for a cash game.");
+			CashGame game = new CashGame(new Blinds(gameDetails.getSmallBlind(), gameDetails.getSmallBlind()));
+			game.setName(gameDetails.getName());
+			game.setType(gameDetails.getType());
+			game.setStartTimestamp(gameDetails.getStartTimestamp());
+			game.setStartingStack(gameDetails.getStartingChipStack());
+			game.setOwner(gameDetails.getOwner());
+			return gameRepository
+					.save(game)
+					.map(GameServerImpl::gameToGameDetails);			
 		} else {
 			TournamentGame game = new TournamentGame();
-			game.setName(configuration.getName());
-			game.setType(configuration.getType());
-			game.setStartTimestamp(configuration.getStartTimestamp());
-			game.setStartingStack(configuration.getStartingChipStack());
-			game.setOwner(configuration.getOwner());
+			game.setName(gameDetails.getName());
+			game.setType(gameDetails.getType());
+			game.setStartTimestamp(gameDetails.getStartTimestamp());
+			game.setStartingStack(gameDetails.getStartingChipStack());
+			game.setOwner(gameDetails.getOwner());
 			
-			if (configuration.getBlindIntervalMinutes() != null) {
-				game.setBlindIntervalMinutes(configuration.getBlindIntervalMinutes());
+			if (gameDetails.getBlindIntervalMinutes() != null) {
+				game.setBlindIntervalMinutes(gameDetails.getBlindIntervalMinutes());
 			}
-			if (configuration.getCliffLevel() != null) {
-				game.setCliffLevel(configuration.getCliffLevel());
+			if (gameDetails.getCliffLevel() != null) {
+				game.setCliffLevel(gameDetails.getCliffLevel());
 			}
-			if (configuration.getNumberOfRebuys() != null) {
-				game.setNumberOfRebuys(configuration.getNumberOfRebuys());
+			if (gameDetails.getNumberOfRebuys() != null) {
+				game.setNumberOfRebuys(gameDetails.getNumberOfRebuys());
 			}
-			if (configuration.getRebuyChipAmount() != null) {
-				game.setRebuyChipAmount(configuration.getRebuyChipAmount());
+			if (gameDetails.getRebuyChipAmount() != null) {
+				game.setRebuyChipAmount(gameDetails.getRebuyChipAmount());
 			}
-			if (configuration.isAddOnAllowed()) {
-				Assert.notNull(configuration.getAddOnChipAmount(), "The add on chip amount is required.");
+			if (gameDetails.isAddOnAllowed()) {
+				Assert.notNull(gameDetails.getAddOnChipAmount(), "The add on chip amount is required.");
 				game.setAddOnAllowed(true);
-				game.setAddOnChipAmount(configuration.getAddOnChipAmount());
+				game.setAddOnChipAmount(gameDetails.getAddOnChipAmount());
 			}
-			return gameRepository.save(game);			
+			return gameRepository
+					.save(game)
+					.map(GameServerImpl::gameToGameDetails);			
 		}
 	}
 
 	@Override
-	public Mono<Game> updateGame(final GameConfiguration configuration) {
+	public Mono<GameDetails> updateGame(final GameDetails configuration) {
 		Mono<Game> game = gameRepository.findById(configuration.getId());
-		return game.doOnNext((g) -> {
-			gameRepository.save(g);
-		});
+		return game
+			.doOnNext(gameRepository::save)
+			.map(GameServerImpl::gameToGameDetails);
 	}
 
 	@Override
 	public Mono<Void> deleteGame(String gameId) {
 		return gameRepository.deleteById(gameId);
+	}
+	
+	private static GameDetails gameToGameDetails(Game game) {
+		return GameDetails.builder()
+			.game(game)
+			.build();
 	}
 }

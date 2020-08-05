@@ -1,4 +1,4 @@
-package org.homepoker.user.domain;
+package org.homepoker.domain.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

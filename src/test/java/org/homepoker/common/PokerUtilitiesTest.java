@@ -6,8 +6,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.homepoker.domain.poker.Card;
 import org.homepoker.poker.PokerUtilities;
-import org.homepoker.poker.domain.Card;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

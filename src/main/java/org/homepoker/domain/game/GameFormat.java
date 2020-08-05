@@ -1,4 +1,4 @@
-package org.homepoker.game.domain;
+package org.homepoker.domain.game;
 
 public enum GameFormat {
 

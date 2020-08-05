@@ -1,9 +1,10 @@
 package org.homepoker.user;
 
-import java.util.List;
+import org.homepoker.domain.user.User;
+import org.homepoker.domain.user.UserCriteria;
 
-import org.homepoker.user.domain.User;
-import org.homepoker.user.domain.UserCriteria;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface UserManager {
 
@@ -12,26 +13,27 @@ public interface UserManager {
 	 * @param user
 	 * @return
 	 */
-	User createUser(User user);
+	Mono<User> createUser(User user);
 
 	/**
 	 * Update an existing user
 	 * @param user
 	 * @return
 	 */
-	User updateUser(User user);
+	Mono<User> updateUser(User user);
+
 	/**
 	 * Find existing users
 	 * 
 	 * @param criteria
 	 * @return A list of matching users or an empty list if no users are found that match the criteria.
 	 */
-	List<User> finderUsers(UserCriteria criteria);
+	Flux<User> finderUsers(UserCriteria criteria);
 	
 	/**
 	 * Delete a user from the server.
 	 * 
 	 * @param user
 	 */
-	void deleteUser(User user);
+	Mono<Void> deleteUser(User user);
 }
