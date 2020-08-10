@@ -9,11 +9,11 @@ import reactor.core.publisher.Mono;
 public interface UserManager {
 
 	/**
-	 * Create a new user, validating the correct data has been supplied.
+	 * Register a new user, validating the correct data has been supplied.
 	 * @param user
 	 * @return
 	 */
-	Mono<User> createUser(User user);
+	Mono<User> registerUser(User user);
 
 	/**
 	 * Update an existing user

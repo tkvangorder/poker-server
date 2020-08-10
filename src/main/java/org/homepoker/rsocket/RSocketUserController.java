@@ -27,9 +27,9 @@ public class RSocketUserController {
 		this.userManager = userManager;
 	}
 
-	@MessageMapping("create-user")
-	Mono<User> createUser(User user) {
-		return userManager.createUser(user);
+	@MessageMapping("register-user")
+	Mono<User> registerUser(User user) {
+		return userManager.registerUser(user);
 	}
 
 	@MessageMapping("find-games")

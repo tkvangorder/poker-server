@@ -1,6 +1,6 @@
 package org.homepoker.game;
 
-import org.homepoker.common.GameValidationException;
+import org.homepoker.common.ValidationException;
 import org.homepoker.domain.game.GameCriteria;
 import org.homepoker.domain.game.GameDetails;
 
@@ -31,7 +31,7 @@ public interface GameServer {
 	 * The game state passed into this method will be validated.
 	 * @param The passed in game state is used to persist a new game.
 	 * @return The fully persisted game state. If the game's start date is past the current time-stamp, it will be marked as "PAUSED"
-	 * @throws GameValidationException If a validation error occurs 
+	 * @throws ValidationException If a validation error occurs 
 	 */
 	Mono<GameDetails> createGame(GameDetails gameDetails);
 	
@@ -41,7 +41,7 @@ public interface GameServer {
 	 * @param The game details to be applied to the game.
 	 * @return The updated game state.
 	 * 
-	 * @throws GameValidationException If the game does not exist or a validation error occurs 
+	 * @throws ValidationException If the game does not exist or a validation error occurs 
 	 */
 	Mono<GameDetails> updateGame(GameDetails configuration);
 	
@@ -49,7 +49,7 @@ public interface GameServer {
 	 * Delete an existing game.
 	 * 
 	 * @param gameId The ID of the game
-	 * @throws GameValidationException If the game cannot be deleted.
+	 * @throws ValidationException If the game cannot be deleted.
 	 */
 	Mono<Void> deleteGame(String gameId);
 
