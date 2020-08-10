@@ -24,7 +24,7 @@ public class User {
 	/**
 	 * User's password, always encrypted.
 	 */
-	String loginPassword;
+	String password;
 
 	/**
 	 * User's preferred alias when in a game or at a table.

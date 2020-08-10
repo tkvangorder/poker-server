@@ -33,7 +33,7 @@ public interface UserManager {
 	/**
 	 * Delete a user from the server.
 	 * 
-	 * @param user
+	 * @param userId
 	 */
-	Mono<Void> deleteUser(User user);
+	Mono<Void> deleteUser(String userId);
 }

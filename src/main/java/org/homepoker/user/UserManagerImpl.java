@@ -10,6 +10,8 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -37,6 +39,19 @@ public class UserManagerImpl implements UserManager {
 	}
 	@Override
 	public Mono<User> registerUser(User user) {
+		
+		Assert.notNull(user, "The user information cannot be null");
+		Assert.isTrue(!StringUtils.hasText(user.getId()), "The user ID must be null when registering a new user.");
+		Assert.hasText(user.getEmail(), "The user email address is required.");
+		Assert.hasText(user.getName(), "The user name is required.");
+		Assert.hasText(user.getPassword(), "The user password is required.");
+		Assert.hasText(user.getPhone(), "The user phone is required.");
+		
+		if (StringUtils.isEmpty(user.getAlias())) {
+			//If no alias is provided, default it to the user's name
+			user.setAlias(user.getName());
+		}
+		
 		return
 			userRepository.insert(user)
 				.onErrorMap(
@@ -57,8 +72,8 @@ public class UserManagerImpl implements UserManager {
 	}
 
 	@Override
-	public Mono<Void> deleteUser(User user) {
-		return userRepository.delete(user);
+	public Mono<Void> deleteUser(String userId) {
+		return userRepository.deleteById(userId);
 	}
 
 }

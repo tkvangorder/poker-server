@@ -32,6 +32,11 @@ public class RSocketUserController {
 		return userManager.registerUser(user);
 	}
 
+	@MessageMapping("delete-user")
+	Mono<Void> deleteUser(String userId) {
+		return userManager.deleteUser(userId);
+	}
+
 	@MessageMapping("find-games")
 	Flux<GameDetails> findGames(GameCriteria criteria) {
 		return gameServer.findGames(criteria);
