@@ -33,8 +33,8 @@ public class RSocketUserController {
 	}
 
 	@MessageMapping("delete-user")
-	Mono<Void> deleteUser(String userId) {
-		return userManager.deleteUser(userId);
+	Mono<Void> deleteUser(String emailAddress) {
+		return userManager.deleteUser(emailAddress);
 	}
 
 	@MessageMapping("find-games")

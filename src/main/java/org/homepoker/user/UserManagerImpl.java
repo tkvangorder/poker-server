@@ -34,17 +34,25 @@ public class UserManagerImpl implements UserManager {
 		mongoOperations
 			.indexOps(User.class)
 				.ensureIndex(
-					new Index().on("email", Direction.ASC).unique()
-				).block();
+					new Index().on("user", Direction.ASC).unique()
+				)
+				.block();
+		mongoOperations
+		.indexOps(User.class)
+			.ensureIndex(
+				new Index().on("email", Direction.ASC).unique()
+			)
+			.block();
 	}
 	@Override
 	public Mono<User> registerUser(User user) {
 		
 		Assert.notNull(user, "The user information cannot be null");
-		Assert.isTrue(!StringUtils.hasText(user.getId()), "The user ID must be null when registering a new user.");
+		Assert.isTrue(!StringUtils.hasText(user.getId()), "The ID must be null when registering a new user.");
+		Assert.notNull(user.getLoginId(), "The user login ID is required");
+		Assert.hasText(user.getPassword(), "The user password is required.");
 		Assert.hasText(user.getEmail(), "The user email address is required.");
 		Assert.hasText(user.getName(), "The user name is required.");
-		Assert.hasText(user.getPassword(), "The user password is required.");
 		Assert.hasText(user.getPhone(), "The user phone is required.");
 		
 		if (StringUtils.isEmpty(user.getAlias())) {
@@ -57,7 +65,7 @@ public class UserManagerImpl implements UserManager {
 				.onErrorMap(
 						//Map a duplicate key to a user-friendly message.
 						e -> e instanceof DuplicateKeyException,
-						e -> new ValidationException("There is already a user registered with that email.")
+						e -> new ValidationException("There is already a user registered with that loginId or email.")
 				);
 	}
 
@@ -72,8 +80,11 @@ public class UserManagerImpl implements UserManager {
 	}
 
 	@Override
-	public Mono<Void> deleteUser(String userId) {
-		return userRepository.deleteById(userId);
+	public Mono<Void> deleteUser(String loginId) {
+		return userRepository
+			.findByLoginId(loginId)
+			.switchIfEmpty(Mono.error(new ValidationException("The user does not exist.")))
+			.flatMap(userRepository::delete);		
 	}
 
 }
