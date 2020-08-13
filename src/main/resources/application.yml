@@ -1,3 +1,9 @@
+logging:
+  level:
+    ROOT: trace
+    org.mongodb: warn
+    sun: warn
+    javax: warn
 spring:
   rsocket:
     server:
