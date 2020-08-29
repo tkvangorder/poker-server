@@ -10,12 +10,14 @@ import org.homepoker.domain.poker.Card;
 import org.homepoker.poker.PokerUtilities;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class PokerUtilitiesTest {
-
+class PokerUtilitiesTest {
+	
 	@Test
 	@DisplayName("Test toCards error cases")
-	public void testToCardsErrors() {		
+	void testToCardsErrors() {		
 		assertThatThrownBy(() -> PokerUtilities.toCards((String[])null)).as("toCards should throw an IllegalArugmentException ").isInstanceOf(IllegalArgumentException.class);
 		assertThatThrownBy(() -> PokerUtilities.toCards("")).as("toCards should throw an IllegalArugmentException when string is empty").isInstanceOf(IllegalArgumentException.class);
 		assertThatThrownBy(() -> PokerUtilities.toCards("7SASDFASDF")).as("toCards should throw an IllegalArugmentException because it is greater than 2 characters.").isInstanceOf(IllegalArgumentException.class);
@@ -25,7 +27,7 @@ public class PokerUtilitiesTest {
 
 	@Test
 	@DisplayName("Test toCards valid for all card suit/value combinations.")
-	public void testToCardsValid() {
+	void testToCardsValid() {
 		char[] values =new char[] {'2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A', 't', 'j', 'q', 'k', 'a'};
 		char[] suits =  new char[] {'S', 'D', 'H', 'C', 's', 'd', 'h', 'c'}; 
 
@@ -42,7 +44,7 @@ public class PokerUtilitiesTest {
 	
 	@Test
 	@DisplayName("Test parseCards error cases")
-	public void testParseCardsErrors() {		
+	void testParseCardsErrors() {		
 		assertThatThrownBy(() -> PokerUtilities.parseCards(null)).as("parseCards should throw an IllegalArugmentException ").isInstanceOf(IllegalArgumentException.class);
 		assertThatThrownBy(() -> PokerUtilities.toCards("7S ASDFASDF")).as("toCards should throw an IllegalArugmentException because the second card value  is greater than 2 characters.").isInstanceOf(IllegalArgumentException.class);
 		assertThatThrownBy(() -> PokerUtilities.toCards("7H FS")).as("toCards should throw an IllegalArugmentException because the second card value is not valid.").isInstanceOf(IllegalArgumentException.class);
@@ -51,7 +53,7 @@ public class PokerUtilitiesTest {
 
 	@Test
 	@DisplayName("Test parseCards valid for all card suit/value combinations.")
-	public void testParseCardsValid() {
+	void testParseCardsValid() {
 		char[] values =new char[] {'2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A', 't', 'j', 'q', 'k', 'a'};
 		char[] suits =  new char[] {'S', 'D', 'H', 'C', 's', 'd', 'h', 'c'}; 
 
@@ -70,11 +72,11 @@ public class PokerUtilitiesTest {
 	
 	@Test
 	@DisplayName("Test parseCards with empty and whitespace")
-	public void testParseCardsWhitespace() {
+	void testParseCardsWhitespace() {
 		assertThat(PokerUtilities.parseCards("")).hasSize(0);
 		assertThat(PokerUtilities.parseCards("      ")).hasSize(0);
 		assertThat(PokerUtilities.parseCards("						")).hasSize(0);
 		
 	}
-	
+
 }
