@@ -1,10 +1,12 @@
 logging:
   level:
-    ROOT: trace
-    org.mongodb: warn
-    sun: warn
-    javax: warn
+    ROOT: error
+    org.homepoker: info
 spring:
   rsocket:
     server:
       port: 7000
+home-poker:
+  security:
+    adminUsers:
+      - admin

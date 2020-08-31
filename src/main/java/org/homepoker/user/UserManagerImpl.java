@@ -5,10 +5,14 @@ import javax.annotation.PostConstruct;
 import org.homepoker.common.ValidationException;
 import org.homepoker.domain.user.User;
 import org.homepoker.domain.user.UserCriteria;
+import org.homepoker.domain.user.UserInformationUpdate;
+import org.homepoker.domain.user.UserPasswordChangeRequest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.core.index.Index;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -20,9 +24,8 @@ import reactor.core.publisher.Mono;
 public class UserManagerImpl implements UserManager {
 
 	private final UserRepository userRepository;
-
 	private final ReactiveMongoOperations mongoOperations; 
-
+	private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 	public UserManagerImpl(UserRepository userRepository, ReactiveMongoOperations mongoOperations) {
 		this.userRepository = userRepository;
 		this.mongoOperations = mongoOperations;
@@ -59,7 +62,8 @@ public class UserManagerImpl implements UserManager {
 			//If no alias is provided, default it to the user's name
 			user.setAlias(user.getName());
 		}
-		
+		//Encode the user password (the default algorithm is Bcrypt)
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return
 			userRepository.insert(user)
 				.onErrorMap(
@@ -70,10 +74,36 @@ public class UserManagerImpl implements UserManager {
 	}
 
 	@Override
-	public Mono<User> updateUser(User user) {
-		return userRepository.save(user);
+	public Mono<User> updateUserInformation(UserInformationUpdate user) {
+		Assert.notNull(user, "User Information was not provided.");
+		Assert.notNull(user.getLoginId(), "The user login ID is required");
+		Assert.hasText(user.getEmail(), "The user email address is required.");
+		Assert.hasText(user.getName(), "The user name is required.");
+		Assert.hasText(user.getPhone(), "The user phone is required.");
+
+		return userRepository
+				.findByLoginId(user.getLoginId())
+				.switchIfEmpty(Mono.error(new ValidationException("The user does not exist.")))
+				.doOnNext(u -> {
+					u.setEmail(user.getEmail());
+					u.setName(user.getName());
+					u.setPhone(user.getPhone());
+					if (StringUtils.hasText(user.getAlias())) {
+						u.setAlias(user.getAlias());
+					} else {
+						u.setAlias(user.getName());
+					}						
+				})
+				.flatMap(userRepository::save);		
 	}
 
+	@Override
+	public Mono<User> getUser(String loginId) {
+		return userRepository
+			.findByLoginId(loginId)
+			.switchIfEmpty(Mono.error(new ValidationException("The user does not exist.")));
+	}
+	
 	@Override
 	public Flux<User> finderUsers(UserCriteria criteria) {
 		return userRepository.findAll();
@@ -85,6 +115,12 @@ public class UserManagerImpl implements UserManager {
 			.findByLoginId(loginId)
 			.switchIfEmpty(Mono.error(new ValidationException("The user does not exist.")))
 			.flatMap(userRepository::delete);		
+	}
+
+	@Override
+	public Mono<Void> updateUserPassword(UserPasswordChangeRequest userPasswordChangeRequest) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

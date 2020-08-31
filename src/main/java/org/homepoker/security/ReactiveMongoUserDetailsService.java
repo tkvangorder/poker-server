@@ -2,29 +2,34 @@ package org.homepoker.security;
 
 import org.homepoker.common.ValidationException;
 import org.homepoker.domain.user.User;
-import org.homepoker.user.UserRepository;
+import org.homepoker.user.UserManager;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import reactor.core.publisher.Mono;
 
+/**
+ * An implementation of Spring Security's ReactiveUserDetailsService which is used
+ * to validate a user during authentication.
+ *  
+ * @author tyler.vangorder
+ */
 public class ReactiveMongoUserDetailsService implements ReactiveUserDetailsService {
 
-	private final UserRepository userRepository;
+	private final UserManager userManager;
 	private final SecuritySettings securitySettings;
 	
 	
-	public ReactiveMongoUserDetailsService(UserRepository userRepository, SecuritySettings securitySettings) {
-		this.userRepository = userRepository;
+	public ReactiveMongoUserDetailsService(UserManager userManager, SecuritySettings securitySettings) {
+		this.userManager = userManager;
 		this.securitySettings = securitySettings;
 	}
 
 	@Override
 	public Mono<UserDetails> findByUsername(String userLogin) {
-		return userRepository.findByLoginId(userLogin)
+		return userManager.getUser(userLogin)
 			.switchIfEmpty(Mono.error(new ValidationException("Login Failed")))
 			.flatMap(this::userToUserDetails);
-		 
 	}
 
 	private Mono<UserDetails> userToUserDetails(User user) {

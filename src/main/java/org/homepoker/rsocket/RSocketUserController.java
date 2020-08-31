@@ -5,17 +5,17 @@ import org.homepoker.common.InvalidGameException;
 import org.homepoker.domain.game.GameCriteria;
 import org.homepoker.domain.game.GameDetails;
 import org.homepoker.domain.user.User;
+import org.homepoker.domain.user.UserInformationUpdate;
+import org.homepoker.domain.user.UserPasswordChangeRequest;
 import org.homepoker.game.GameManager;
 import org.homepoker.game.GameServer;
 import org.homepoker.user.UserManager;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
-import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Slf4j
 @Controller
 public class RSocketUserController {
 
@@ -32,9 +32,24 @@ public class RSocketUserController {
 		return userManager.registerUser(user);
 	}
 
+	@MessageMapping("get-user")
+	Mono<User> getUser(String loginId) {
+		return userManager.getUser(loginId);
+	}
+
+	@MessageMapping("update-user")
+	Mono<User> updateUser(UserInformationUpdate update) {
+		return userManager.updateUserInformation(update);
+	}
+
+	@MessageMapping("update-user-password")
+	Mono<Void> updateUserPassword(UserPasswordChangeRequest passwordRequest) {
+		return userManager.updateUserPassword(passwordRequest);
+	}
+	
 	@MessageMapping("delete-user")
-	Mono<Void> deleteUser(String emailAddress) {
-		return userManager.deleteUser(emailAddress);
+	Mono<Void> deleteUser(String loginId) {
+		return userManager.deleteUser(loginId);
 	}
 
 	@MessageMapping("find-games")

@@ -1,6 +1,6 @@
 package org.homepoker.security;
 
-import org.homepoker.user.UserRepository;
+import org.homepoker.user.UserManager;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,10 +10,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.rsocket.EnableRSocketSecurity;
 import org.springframework.security.config.annotation.rsocket.RSocketSecurity;
-import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.messaging.handler.invocation.reactive.AuthenticationPrincipalArgumentResolver;
 import org.springframework.security.rsocket.core.PayloadSocketAcceptorInterceptor;
 
@@ -32,25 +29,15 @@ public class RSocketSecurityConfiguration {
     }
     
     @Bean
-    ReactiveUserDetailsService userDetailsService(UserRepository userRepository, SecuritySettings securitySettings) {
-        UserDetails user = User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("pass")
-                .roles("USER")
-                .build();
-
-        UserDetails admin = User.withDefaultPasswordEncoder()
-                .username("test")
-                .password("pass")
-                .roles("NONE")
-                .build();
-
-        return new MapReactiveUserDetailsService(user, admin);//    	return new ReactiveMongoUserDetailsService(userRepository, securitySettings);
+    ReactiveUserDetailsService userDetailsService(UserManager userManager, SecuritySettings securitySettings) {
+    	return new ReactiveMongoUserDetailsService(userManager, securitySettings);
     }
     
     @Bean
     PayloadSocketAcceptorInterceptor authorization(RSocketSecurity security) {
         security.authorizePayload(authorize -> authorize
+        		.setup().permitAll()
+        		.route("register-user").permitAll()
         		.anyExchange().authenticated()
         ).simpleAuthentication(Customizer.withDefaults());
         return security.build();
