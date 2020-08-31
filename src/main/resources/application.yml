@@ -2,11 +2,17 @@ logging:
   level:
     ROOT: error
     org.homepoker: info
+    #Set this to "debug" to get RSocket frame logging
+    io.rsocket.FrameLogger: debug
+    
 spring:
   rsocket:
     server:
       port: 7000
+
+
 home-poker:
   security:
+    # This is a list of login IDs that are granted admin privileges.
     adminUsers:
       - admin
