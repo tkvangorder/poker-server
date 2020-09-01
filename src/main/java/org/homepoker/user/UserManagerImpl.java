@@ -37,7 +37,7 @@ public class UserManagerImpl implements UserManager {
 		mongoOperations
 			.indexOps(User.class)
 				.ensureIndex(
-					new Index().on("user", Direction.ASC).unique()
+					new Index().on("loginId", Direction.ASC).unique()
 				)
 				.block();
 		mongoOperations
@@ -70,7 +70,11 @@ public class UserManagerImpl implements UserManager {
 						//Map a duplicate key to a user-friendly message.
 						e -> e instanceof DuplicateKeyException,
 						e -> new ValidationException("There is already a user registered with that loginId or email.")
-				);
+				)
+				.map(u -> {
+					u.setPassword(null);
+					return u;
+				});		
 	}
 
 	@Override
@@ -84,7 +88,7 @@ public class UserManagerImpl implements UserManager {
 		return userRepository
 				.findByLoginId(user.getLoginId())
 				.switchIfEmpty(Mono.error(new ValidationException("The user does not exist.")))
-				.doOnNext(u -> {
+				.map(u -> {
 					u.setEmail(user.getEmail());
 					u.setName(user.getName());
 					u.setPhone(user.getPhone());
@@ -92,21 +96,32 @@ public class UserManagerImpl implements UserManager {
 						u.setAlias(user.getAlias());
 					} else {
 						u.setAlias(user.getName());
-					}						
+					}
+					return u;
 				})
-				.flatMap(userRepository::save);		
+				.flatMap(userRepository::save)
+				.map(u -> {
+					u.setPassword(null);
+					return u;
+				});		
 	}
 
 	@Override
 	public Mono<User> getUser(String loginId) {
-		return userRepository
-			.findByLoginId(loginId)
-			.switchIfEmpty(Mono.error(new ValidationException("The user does not exist.")));
-	}
+		return userRepository.findByLoginId(loginId)
+				.map(user -> {
+					user.setPassword(null);
+					return user;
+				});
+		}
 	
 	@Override
-	public Flux<User> finderUsers(UserCriteria criteria) {
-		return userRepository.findAll();
+	public Flux<User> findUsers(UserCriteria criteria) {
+		return userRepository.findAll()
+			.map(user -> {
+				user.setPassword(null);
+				return user;
+			});
 	}
 
 	@Override
@@ -119,8 +134,17 @@ public class UserManagerImpl implements UserManager {
 
 	@Override
 	public Mono<Void> updateUserPassword(UserPasswordChangeRequest userPasswordChangeRequest) {
-		// TODO Auto-generated method stub
-		return null;
+		return userRepository.findByLoginId(userPasswordChangeRequest.getLoginId())
+		.switchIfEmpty(Mono.error(new SecurityException("Access Denied")))
+	    .map(user -> {
+			if (!passwordEncoder.matches(userPasswordChangeRequest.getUserChallenge(), user.getPassword())) {
+				throw new ValidationException("Access denied");
+			}
+			user.setPassword(passwordEncoder.encode(userPasswordChangeRequest.getNewPassword()));
+			return user;
+	    })
+		.flatMap(userRepository::save)
+		.then(Mono.empty());		
 	}
 
 }

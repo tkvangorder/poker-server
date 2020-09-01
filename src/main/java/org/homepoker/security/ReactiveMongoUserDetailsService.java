@@ -1,8 +1,7 @@
 package org.homepoker.security;
 
-import org.homepoker.common.ValidationException;
 import org.homepoker.domain.user.User;
-import org.homepoker.user.UserManager;
+import org.homepoker.user.UserRepository;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -16,19 +15,19 @@ import reactor.core.publisher.Mono;
  */
 public class ReactiveMongoUserDetailsService implements ReactiveUserDetailsService {
 
-	private final UserManager userManager;
+	private final UserRepository userRepository;
 	private final SecuritySettings securitySettings;
 	
 	
-	public ReactiveMongoUserDetailsService(UserManager userManager, SecuritySettings securitySettings) {
-		this.userManager = userManager;
+	public ReactiveMongoUserDetailsService(UserRepository userRepository, SecuritySettings securitySettings) {
+		this.userRepository = userRepository;
 		this.securitySettings = securitySettings;
 	}
 
 	@Override
 	public Mono<UserDetails> findByUsername(String userLogin) {
-		return userManager.getUser(userLogin)
-			.switchIfEmpty(Mono.error(new ValidationException("Login Failed")))
+		return userRepository.findByLoginId(userLogin)
+//			.switchIfEmpty(Mono.error(new ValidationException("Login Failed")))
 			.flatMap(this::userToUserDetails);
 	}
 
@@ -36,7 +35,7 @@ public class ReactiveMongoUserDetailsService implements ReactiveUserDetailsServi
 
 		String[] roles = new String[] {"user"};
 		if (securitySettings.adminUsers.contains(user.getLoginId())) {
-			roles = new String[] {"user","admin"};
+			roles = new String[] {"USER","ADMIN"};
 		}
 		return Mono.just(
 			org.springframework.security.core.userdetails.User.builder()

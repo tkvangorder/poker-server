@@ -1,6 +1,6 @@
 package org.homepoker.security;
 
-import org.homepoker.user.UserManager;
+import org.homepoker.user.UserRepository;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,16 +29,16 @@ public class RSocketSecurityConfiguration {
     }
     
     @Bean
-    ReactiveUserDetailsService userDetailsService(UserManager userManager, SecuritySettings securitySettings) {
-    	return new ReactiveMongoUserDetailsService(userManager, securitySettings);
+    ReactiveUserDetailsService userDetailsService(UserRepository userRepository, SecuritySettings securitySettings) {
+    	return new ReactiveMongoUserDetailsService(userRepository, securitySettings);
     }
     
     @Bean
     PayloadSocketAcceptorInterceptor authorization(RSocketSecurity security) {
         security.authorizePayload(authorize -> authorize
         		.setup().permitAll()
-        		.route("register-user").permitAll()
-        		.anyExchange().authenticated()
+        		.route("register-user").hasRole("ANONYMOUS")
+        		.anyExchange().hasAnyRole("USER")
         ).simpleAuthentication(Customizer.withDefaults());
         return security.build();
     }   

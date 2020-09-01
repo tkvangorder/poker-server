@@ -32,8 +32,8 @@ public interface UserManager {
 	 * Update an existing user's information. This method can be used to change
 	 * the user's name and contact details.
 	 * 
-	 * @param user
-	 * @return
+	 * @param user The user's updated contact information
+	 * @return An updated User
 	 */
 	Mono<User> updateUserInformation(UserInformationUpdate userInformation);
 
@@ -51,7 +51,7 @@ public interface UserManager {
 	 * @param criteria
 	 * @return A list of matching users or an empty list if no users are found that match the criteria.
 	 */
-	Flux<User> finderUsers(UserCriteria criteria);
+	Flux<User> findUsers(UserCriteria criteria);
 	
 	/**
 	 * Delete a user from the server.
