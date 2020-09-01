@@ -16,17 +16,17 @@ public class RSocketAdminController {
 		this.gameServer = gameServer;
 	}
 	
-	@MessageMapping("create-game")
+	@MessageMapping("game-create")
 	Mono<GameDetails> createGame(GameDetails configuration) {
 		return gameServer.createGame(configuration);
 	}
 
-	@MessageMapping("update-game")
+	@MessageMapping("game-update")
 	Mono<GameDetails> updateGame(GameDetails configuration) { 
 		return gameServer.updateGame(configuration);		
 	}
 
-	@MessageMapping("delete-game")
+	@MessageMapping("game-delete")
 	Mono<Void> deleteGame(String gameId) {
 		return gameServer.deleteGame(gameId);
 	}	

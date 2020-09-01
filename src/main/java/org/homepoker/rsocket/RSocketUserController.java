@@ -27,27 +27,27 @@ public class RSocketUserController {
 		this.userManager = userManager;
 	}
 
-	@MessageMapping("register-user")
+	@MessageMapping("user-register")
 	Mono<User> registerUser(User user) {
 		return userManager.registerUser(user);
 	}
 
-	@MessageMapping("get-user")
+	@MessageMapping("user-get")
 	Mono<User> getUser(String loginId) {
 		return userManager.getUser(loginId);
 	}
 
-	@MessageMapping("update-user")
+	@MessageMapping("user-update")
 	Mono<User> updateUser(UserInformationUpdate update) {
 		return userManager.updateUserInformation(update);
 	}
 
-	@MessageMapping("update-user-password")
+	@MessageMapping("user-update-password")
 	Mono<Void> updateUserPassword(UserPasswordChangeRequest passwordRequest) {
 		return userManager.updateUserPassword(passwordRequest);
 	}
 	
-	@MessageMapping("delete-user")
+	@MessageMapping("user-delete")
 	Mono<Void> deleteUser(String loginId) {
 		return userManager.deleteUser(loginId);
 	}
