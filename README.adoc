@@ -20,12 +20,11 @@ This is a sandbox environment for experimenting with Spring reactive programming
 == TODO
 |===
 |Percent |Description
-|20% |Convert imperative to reactive code. Using Reactor.
+|30% |Convert imperative to reactive code. Using Reactor.
 |50% |Build a domain model for a game, table, and players.
-|20% |Initial RSocket connectivity
-|40% |User management (Create/sign-up, update, find)
+| 0& |Sort out testing of reactive code.
+| 0% |Rsocket Security Authorization (Enforce permissions on API to limit user's access to others user information.
 | 0% |Game creation and management 
-| 0% |Secure RSocket with spring security
 | 0% |Game manager functionality (pause game, add/move players, etc)
 |===
 
@@ -35,6 +34,9 @@ This is a sandbox environment for experimenting with Spring reactive programming
 - Implement a poker hand ranking algorithm. Should handle Texas Hold'em to start.
 - Implement a blind schedule calculator.
 - Stub out a command-line RSocket client (http://github.com/tkvangorder/poker-client)
+- User management (Create/sign-up, update, find)
+- RSocket Authentication (You can connection as anonymous to create your user, then you can login as a registered user to access most endpoints)
+
 
 == Dev Setup
 
