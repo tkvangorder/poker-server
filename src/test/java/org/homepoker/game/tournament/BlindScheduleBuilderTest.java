@@ -6,12 +6,12 @@ import org.homepoker.domain.game.BlindSchedule;
 import org.homepoker.domain.game.Blinds;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-public class BlindScheduleBuilderTest {
 
+class BlindScheduleBuilderTest {
 
 	@Test
 	@DisplayName("Test the defaults for the blind schedule builder.")
-	public void testDefaultBlindSchedule() {
+	void testDefaultBlindSchedule() {
 		BlindSchedule schedule = blindSchedule()
 				.numberOfPlayers(24)
 				.tournamentLengthHours(4)

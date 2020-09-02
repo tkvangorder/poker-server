@@ -2,15 +2,14 @@ package org.homepoker.game.tournament;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.homepoker.game.tournament.TournamentUtilities;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class TournamentUtilitiesTest {
+class TournamentUtilitiesTest {
 
 	@Test
 	@DisplayName("round chip value to nearest denomination of 50")
-	public void testRoundToNearest50() {
+	void testRoundToNearest50() {
 
 		//Edge case for numbers lower than 25, should never be zero.
 		assertThat(TournamentUtilities.roundToBigBlind(1)).isEqualTo(50);
@@ -25,7 +24,7 @@ public class TournamentUtilitiesTest {
 
 	@Test
 	@DisplayName("round chip value to nearest denomination of 100")
-	public void testRoundToNearest100() {
+	void testRoundToNearest100() {
 
 		assertThat(TournamentUtilities.roundToBigBlind(549)).isEqualTo(500);
 		assertThat(TournamentUtilities.roundToBigBlind(550)).isEqualTo(600);
@@ -36,7 +35,7 @@ public class TournamentUtilitiesTest {
 
 	@Test
 	@DisplayName("round chip value to nearest denomination of 500")
-	public void testRoundToNearest500() {
+	void testRoundToNearest500() {
 		assertThat(TournamentUtilities.roundToBigBlind(2249)).isEqualTo(2000);
 		assertThat(TournamentUtilities.roundToBigBlind(2250)).isEqualTo(2500);
 		assertThat(TournamentUtilities.roundToBigBlind(4449)).isEqualTo(4500);
@@ -45,7 +44,7 @@ public class TournamentUtilitiesTest {
 
 	@Test
 	@DisplayName("round chip value to nearest denomination of 1000")
-	public void testRoundToNearest1000() {
+	void testRoundToNearest1000() {
 		assertThat(TournamentUtilities.roundToBigBlind(5499)).isEqualTo(5000);
 		assertThat(TournamentUtilities.roundToBigBlind(5500)).isEqualTo(6000);
 		assertThat(TournamentUtilities.roundToBigBlind(9499)).isEqualTo(9000);
@@ -56,7 +55,7 @@ public class TournamentUtilitiesTest {
 
 	@Test
 	@DisplayName("round chip value to nearest denomination of 5000")
-	public void testRoundToNearest5000() {
+	void testRoundToNearest5000() {
 		assertThat(TournamentUtilities.roundToBigBlind(22499)).isEqualTo(20000);
 		assertThat(TournamentUtilities.roundToBigBlind(22500)).isEqualTo(25000);
 		assertThat(TournamentUtilities.roundToBigBlind(47499)).isEqualTo(45000);
@@ -65,7 +64,7 @@ public class TournamentUtilitiesTest {
 
 	@Test
 	@DisplayName("round chip value to nearest denomination of 10000")
-	public void testRoundToNearest10000() {
+	void testRoundToNearest10000() {
 		assertThat(TournamentUtilities.roundToBigBlind(54_999)).isEqualTo(50_000);
 		assertThat(TournamentUtilities.roundToBigBlind(55_000)).isEqualTo(60_000);
 		assertThat(TournamentUtilities.roundToBigBlind(104_999)).isEqualTo(100_000);
@@ -76,7 +75,7 @@ public class TournamentUtilitiesTest {
 
 	@Test
 	@DisplayName("round chip value to nearest denomination of 25000")
-	public void testRoundToNearest25000() {
+	void testRoundToNearest25000() {
 		assertThat(TournamentUtilities.roundToBigBlind(212_499)).isEqualTo(200_000);
 		assertThat(TournamentUtilities.roundToBigBlind(212_500)).isEqualTo(225_000);
 		assertThat(TournamentUtilities.roundToBigBlind(512_499)).isEqualTo(500_000);

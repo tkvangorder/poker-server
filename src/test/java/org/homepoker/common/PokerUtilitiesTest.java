@@ -10,8 +10,6 @@ import org.homepoker.domain.poker.Card;
 import org.homepoker.poker.PokerUtilities;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class PokerUtilitiesTest {
 	
@@ -73,9 +71,9 @@ class PokerUtilitiesTest {
 	@Test
 	@DisplayName("Test parseCards with empty and whitespace")
 	void testParseCardsWhitespace() {
-		assertThat(PokerUtilities.parseCards("")).hasSize(0);
-		assertThat(PokerUtilities.parseCards("      ")).hasSize(0);
-		assertThat(PokerUtilities.parseCards("						")).hasSize(0);
+		assertThat(PokerUtilities.parseCards("")).isEmpty();
+		assertThat(PokerUtilities.parseCards("      ")).isEmpty();
+		assertThat(PokerUtilities.parseCards("						")).isEmpty();
 		
 	}
 

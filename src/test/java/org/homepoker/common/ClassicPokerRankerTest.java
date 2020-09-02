@@ -18,13 +18,13 @@ import org.homepoker.poker.ClassicPokerRanker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class ClassicPokerRankerTest {
+class ClassicPokerRankerTest {
 	
 	ClassicPokerRanker ranker = new BitwisePokerRanker();
 	
 	@Test
 	@DisplayName("Test Five Card Hand Results") 
-	public void testFiveCardHandResults() {
+	void testFiveCardHandResults() {
 
 		HandResult result =ranker.rankHand(parseCards("AC TC QC KC JC")); 
 		assertThat(result.getRank()).isEqualTo(HandRank.STRAIGHT_FLUSH);
@@ -71,7 +71,7 @@ public class ClassicPokerRankerTest {
 	
 	@Test
 	@DisplayName("Test Seven Card Hand Results") 
-	public void testSevenCardHandResults() {
+	void testSevenCardHandResults() {
 
 		HandResult result =ranker.rankHand(parseCards("2C AH AC TC QC KC JC")); 
 		assertThat(result.getRank()).isEqualTo(HandRank.STRAIGHT_FLUSH);
@@ -129,7 +129,7 @@ public class ClassicPokerRankerTest {
 	
 	@Test
 	@DisplayName("Test ranking performance") 
-	public void testSevenCardHandRankingPerformance() {
+	void testSevenCardHandRankingPerformance() {
 
 		//Test that the poker ranker can deal and rank 100,000 hands with 7 players per hand.
 		//The ranker should easily accomplish this under 1.2 seconds.
@@ -150,6 +150,4 @@ public class ClassicPokerRankerTest {
 			}
 		});
 	}
-	
-	
 }
