@@ -27,13 +27,12 @@ public class ReactiveMongoUserDetailsService implements ReactiveUserDetailsServi
 	@Override
 	public Mono<UserDetails> findByUsername(String userLogin) {
 		return userRepository.findByLoginId(userLogin)
-//			.switchIfEmpty(Mono.error(new ValidationException("Login Failed")))
 			.flatMap(this::userToUserDetails);
 	}
 
 	private Mono<UserDetails> userToUserDetails(User user) {
 
-		String[] roles = new String[] {"user"};
+		String[] roles = new String[] {"USER"};
 		if (securitySettings.adminUsers.contains(user.getLoginId())) {
 			roles = new String[] {"USER","ADMIN"};
 		}

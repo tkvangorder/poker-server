@@ -5,6 +5,7 @@ import org.homepoker.common.InvalidGameException;
 import org.homepoker.domain.game.GameCriteria;
 import org.homepoker.domain.game.GameDetails;
 import org.homepoker.domain.user.User;
+import org.homepoker.domain.user.UserCriteria;
 import org.homepoker.domain.user.UserInformationUpdate;
 import org.homepoker.domain.user.UserPasswordChangeRequest;
 import org.homepoker.game.GameManager;
@@ -37,6 +38,13 @@ public class RSocketUserController {
 		return userManager.getUser(loginId);
 	}
 
+	@MessageMapping("user-find")
+	//For now, disabling authorization to make dev/testings easier.
+	//@PreAuthorize("hasRole('ROLE_ADMIN')")
+	Flux<User> findUsers(UserCriteria criteria) {
+		return userManager.findUsers(criteria);
+	}
+	
 	@MessageMapping("user-update")
 	Mono<User> updateUser(UserInformationUpdate update) {
 		return userManager.updateUserInformation(update);

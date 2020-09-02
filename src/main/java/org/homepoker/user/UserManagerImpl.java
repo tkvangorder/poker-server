@@ -1,5 +1,7 @@
 package org.homepoker.user;
 
+import static org.springframework.data.mongodb.core.query.Query.query;
+
 import javax.annotation.PostConstruct;
 
 import org.homepoker.common.ValidationException;
@@ -11,6 +13,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.core.index.Index;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -71,10 +74,7 @@ public class UserManagerImpl implements UserManager {
 						e -> e instanceof DuplicateKeyException,
 						e -> new ValidationException("There is already a user registered with that loginId or email.")
 				)
-				.map(u -> {
-					u.setPassword(null);
-					return u;
-				});		
+				.map(UserManagerImpl::filterPassword);
 	}
 
 	@Override
@@ -100,28 +100,38 @@ public class UserManagerImpl implements UserManager {
 					return u;
 				})
 				.flatMap(userRepository::save)
-				.map(u -> {
-					u.setPassword(null);
-					return u;
-				});		
+				.map(UserManagerImpl::filterPassword);
 	}
 
 	@Override
 	public Mono<User> getUser(String loginId) {
 		return userRepository.findByLoginId(loginId)
-				.map(user -> {
-					user.setPassword(null);
-					return user;
-				});
+				.map(UserManagerImpl::filterPassword);
 		}
 	
 	@Override
 	public Flux<User> findUsers(UserCriteria criteria) {
-		return userRepository.findAll()
-			.map(user -> {
-				user.setPassword(null);
-				return user;
-			});
+
+		if (criteria == null ||
+				(!StringUtils.hasText(criteria.getUserEmail()) && !StringUtils.hasText(criteria.getUserLoginId()))) {
+			//No criteria, return all users.
+			return userRepository.findAll()
+					.map(UserManagerImpl::filterPassword);
+		}
+		
+		Criteria mongoCriteria = new Criteria(); 
+
+		if (StringUtils.hasText(criteria.getUserLoginId())) {
+			mongoCriteria.and("loginId").regex(criteria.getUserLoginId());
+		}
+		if (StringUtils.hasText(criteria.getUserEmail())) {
+			mongoCriteria.and("email").regex(criteria.getUserEmail());
+		}
+		
+		return mongoOperations.query(User.class)
+			.matching(query(mongoCriteria))
+			.all()
+			.map(UserManagerImpl::filterPassword);
 	}
 
 	@Override
@@ -147,4 +157,13 @@ public class UserManagerImpl implements UserManager {
 		.then(Mono.empty());		
 	}
 
+	/**
+	 * Helper method to clear the user password field prior to returning it to the caller.
+	 * @param user A user object
+	 * @return user object with its password field cleared.
+	 */
+	private static User filterPassword(User user) {
+		user.setPassword(null);
+		return user;
+	}
 }
