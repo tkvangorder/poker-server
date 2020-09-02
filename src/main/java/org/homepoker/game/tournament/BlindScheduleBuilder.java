@@ -1,4 +1,4 @@
-package org.homepoker.game;
+package org.homepoker.game.tournament;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -119,12 +119,12 @@ public class BlindScheduleBuilder {
 		}
 
 		int numberofIntervals = (int)tournamentLength.dividedBy(blindInterval);
-		int blindLevelFactor = GameUtilities.computeBlindLevelFactor(estimatedTotalChips, numberofIntervals);
+		int blindLevelFactor = TournamentUtilities.computeBlindLevelFactor(estimatedTotalChips, numberofIntervals);
 
 		//Precompute the blind levels.
 		List<Blinds> blindLevels = new ArrayList<>(numberofIntervals + 1);
 		for (int index = 0; index < (numberofIntervals + (numberofIntervals /2)) ; index++) {
-			int bigBlind = GameUtilities.computeBigBlindAtLevel(index, blindLevelFactor);
+			int bigBlind = TournamentUtilities.computeBigBlindAtLevel(index, blindLevelFactor);
 			blindLevels.add(new Blinds(bigBlind/2, bigBlind));
 		}
 

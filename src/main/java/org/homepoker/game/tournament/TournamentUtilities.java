@@ -1,4 +1,4 @@
-package org.homepoker.game;
+package org.homepoker.game.tournament;
 
 /**
  * Some useful utilities for managing a poker game.
@@ -6,7 +6,7 @@ package org.homepoker.game;
  * @author tyler.vangorder
  *
  */
-public class GameUtilities {
+public class TournamentUtilities {
 
 	/**
 	 * This method takes an estimate of the total chips in play for a tournament and the desired number of blind levels and calculates a constant
@@ -39,7 +39,7 @@ public class GameUtilities {
 	 * After a value is calculated, it will be rounded to the closest chip denomination.
 	 *
 	 * @param level The blind level
-	 * @param blindLevelFactor (a constant that can be computed using the number of chips in the game and the total number of blind intervals. See {@link GameUtilities#computeBlindLevelFactor(int, int)}
+	 * @param blindLevelFactor (a constant that can be computed using the number of chips in the game and the total number of blind intervals. See {@link TournamentUtilities#computeBlindLevelFactor(int, int)}
 	 * @return The value of the big blind.
 	 */
 	public static int computeBigBlindAtLevel(int level, int blindLevelFactor) {

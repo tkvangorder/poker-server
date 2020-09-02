@@ -1,6 +1,6 @@
-package org.homepoker.game;
+package org.homepoker.game.tournament;
 
-import static org.homepoker.game.BlindScheduleBuilder.blindSchedule;
+import static org.homepoker.game.tournament.BlindScheduleBuilder.blindSchedule;
 
 import org.homepoker.domain.game.BlindSchedule;
 import org.homepoker.domain.game.Blinds;

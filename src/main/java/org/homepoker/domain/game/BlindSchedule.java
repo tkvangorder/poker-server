@@ -2,7 +2,7 @@ package org.homepoker.domain.game;
 
 import java.util.List;
 
-import org.homepoker.game.GameUtilities;
+import org.homepoker.game.tournament.TournamentUtilities;
 import org.springframework.util.Assert;
 
 import lombok.Data;
@@ -33,7 +33,7 @@ public class BlindSchedule {
 		} else {
 			//If the current blind level exceeds the pre-determined schedule, we fall back to calculating the level.
 			//Note: computeBigBlindAtLevel is 1-based, that is why we add one.
-			int bigBlind = GameUtilities.computeBigBlindAtLevel(currentBlindLevel + 1, blindLevelFactor);
+			int bigBlind = TournamentUtilities.computeBigBlindAtLevel(currentBlindLevel + 1, blindLevelFactor);
 			return new Blinds(bigBlind/2, bigBlind);
 		}
 	}

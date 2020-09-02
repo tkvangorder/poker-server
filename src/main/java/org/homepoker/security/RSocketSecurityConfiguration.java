@@ -37,7 +37,7 @@ public class RSocketSecurityConfiguration {
     PayloadSocketAcceptorInterceptor authorization(RSocketSecurity security) {
         security.authorizePayload(authorize -> authorize
         		.setup().permitAll()
-        		.route("user-register").hasRole("ANONYMOUS")
+        		.route("user-manager-register-user").hasRole("ANONYMOUS")
         		.anyExchange().hasAnyRole("USER")
         ).simpleAuthentication(Customizer.withDefaults());
         return security.build();

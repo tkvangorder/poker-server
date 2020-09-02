@@ -1,6 +1,6 @@
-package org.homepoker.game;
+package org.homepoker.game.cash;
 
-import org.homepoker.domain.game.Game;
+import org.homepoker.domain.game.CashGame;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
  * @author tyler.vangorder
  */
 @Repository
-public interface GameRepository extends ReactiveMongoRepository<Game, String> {
+public interface CashGameRepository extends ReactiveMongoRepository<CashGame, String> {
 }

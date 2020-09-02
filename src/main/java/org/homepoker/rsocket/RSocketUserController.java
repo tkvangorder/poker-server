@@ -2,14 +2,12 @@ package org.homepoker.rsocket;
 
 import org.homepoker.common.Event;
 import org.homepoker.common.InvalidGameException;
-import org.homepoker.domain.game.GameCriteria;
-import org.homepoker.domain.game.GameDetails;
 import org.homepoker.domain.user.User;
 import org.homepoker.domain.user.UserCriteria;
 import org.homepoker.domain.user.UserInformationUpdate;
 import org.homepoker.domain.user.UserPasswordChangeRequest;
 import org.homepoker.game.GameManager;
-import org.homepoker.game.GameServer;
+import org.homepoker.game.cash.CashGameServer;
 import org.homepoker.user.UserManager;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
@@ -20,50 +18,50 @@ import reactor.core.publisher.Mono;
 @Controller
 public class RSocketUserController {
 
-	private final GameServer gameServer;
+	private final CashGameServer gameServer;
 	private final UserManager userManager;
 	
-	public RSocketUserController(GameServer gameServer, UserManager userManager) {
+	public RSocketUserController(CashGameServer gameServer, UserManager userManager) {
 		this.gameServer = gameServer;
 		this.userManager = userManager;
 	}
 
-	@MessageMapping("user-register")
+	@MessageMapping("user-manager-register-user")
 	Mono<User> registerUser(User user) {
 		return userManager.registerUser(user);
 	}
 
-	@MessageMapping("user-get")
+	@MessageMapping("user-manager-get-user")
 	Mono<User> getUser(String loginId) {
 		return userManager.getUser(loginId);
 	}
 
-	@MessageMapping("user-find")
+	@MessageMapping("user-manager-find-users")
 	//For now, disabling authorization to make dev/testings easier.
 	//@PreAuthorize("hasRole('ROLE_ADMIN')")
 	Flux<User> findUsers(UserCriteria criteria) {
 		return userManager.findUsers(criteria);
 	}
 	
-	@MessageMapping("user-update")
+	@MessageMapping("user-manager-update-user")
 	Mono<User> updateUser(UserInformationUpdate update) {
 		return userManager.updateUserInformation(update);
 	}
 
-	@MessageMapping("user-update-password")
+	@MessageMapping("user-manager-update-user-password")
 	Mono<Void> updateUserPassword(UserPasswordChangeRequest passwordRequest) {
 		return userManager.updateUserPassword(passwordRequest);
 	}
 	
-	@MessageMapping("user-delete")
+	@MessageMapping("user-manager-delete-user")
 	Mono<Void> deleteUser(String loginId) {
 		return userManager.deleteUser(loginId);
 	}
 
-	@MessageMapping("find-games")
-	Flux<GameDetails> findGames(GameCriteria criteria) {
-		return gameServer.findGames(criteria);
-	}
+//	@MessageMapping("find-games")
+//	Flux<GameDetails> findGames(GameCriteria criteria) {
+//		return gameServer.findGames(criteria);
+//	}
 
 	@MessageMapping("game-command")
 	void gameCommand(GameCommand command) {
