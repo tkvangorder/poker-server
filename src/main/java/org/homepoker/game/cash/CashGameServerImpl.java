@@ -2,6 +2,7 @@ package org.homepoker.game.cash;
 
 import java.util.Date;
 
+import org.homepoker.common.ValidationException;
 import org.homepoker.domain.game.Game;
 import org.homepoker.domain.game.GameCriteria;
 import org.homepoker.domain.game.GameStatus;
@@ -40,6 +41,9 @@ public class CashGameServerImpl implements CashGameServer {
 		Assert.notNull(gameDetails.getOwnerLoginId(), "The game owner is required when creating a game.");
 		Assert.notNull(gameDetails.getSmallBlind(), "The small blind must be defined for a cash game.");
 
+		//If the a start date is not specified or is before the current date, we just default to
+		//"now" and immediately transition game to a "paused" state. The owner can then choose when they want to
+		//"un-pause" game.
 		Date now = new Date();
 		Date startTimestamp = gameDetails.getStartTimestamp();
 
@@ -48,15 +52,22 @@ public class CashGameServerImpl implements CashGameServer {
 			startTimestamp = now;
 			status = GameStatus.PAUSED;
 		}
-		int bigBlind = gameDetails.getSmallBlind() * 2;
-		if (gameDetails.getBigBlind() != null) {
-			bigBlind = gameDetails.getBigBlind();			
-		}
+		
+		//Default game type to Texas Hold'em.
 		GameType gameType = gameDetails.getGameType();
 		if (gameDetails.getGameType() == null) {
 			gameType = GameType.TEXAS_HOLDEM;
 		}
-				
+
+		//If big blind is not explicitly passed in, we just double the small blind.
+		int bigBlind = gameDetails.getSmallBlind() * 2;
+		if (gameDetails.getBigBlind() != null) {
+			bigBlind = gameDetails.getBigBlind();
+			if (bigBlind <= gameDetails.getSmallBlind()) {
+				throw new ValidationException("The big blind must be larger then the small blind. Typically it should be double the small blind.");
+			}
+		}
+						
 		CashGame game = CashGame.builder()
 			.name(gameDetails.getName())
 			.gameType(gameType)
@@ -67,9 +78,10 @@ public class CashGameServerImpl implements CashGameServer {
 			.smallBlind(gameDetails.getSmallBlind())
 			.bigBlind(bigBlind)
 			.build();
-		
-//		game.setStartingStack(gameDetails.getStartingChipStack());
-//		game.setOwner(gameDetails.getOwner());
+
+		//TODO : Need to resolve user ID for owner to a User object prior to save.
+
+		//Save to database.
 		return gameRepository
 				.save(game)
 				.map(CashGameServerImpl::gameToGameDetails);			

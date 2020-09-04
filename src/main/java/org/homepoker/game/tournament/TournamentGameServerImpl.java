@@ -41,6 +41,9 @@ public class TournamentGameServerImpl implements TournamentGameServer {
 		Assert.notNull(gameDetails.getBuyInAmount(), "The buy-in amount is required when creating a game.");		
 		Assert.notNull(gameDetails.getOwnerLoginId(), "The game owner is required when creating a game.");
 
+		//If the a start date is not specified or is before the current date, we just default to
+		//"now" and immediately transition game to a "paused" state. The owner can then choose when they want to
+		//"un-pause" game.
 		Date now = new Date();
 		Date startTimestamp = gameDetails.getStartTimestamp();
 
@@ -49,11 +52,14 @@ public class TournamentGameServerImpl implements TournamentGameServer {
 			startTimestamp = now;
 			status = GameStatus.PAUSED;
 		}
+
+		//Default game type to Texas Hold'em.		
 		GameType gameType = gameDetails.getGameType();
 		if (gameDetails.getGameType() == null) {
 			gameType = GameType.TEXAS_HOLDEM;
 		}
 
+		//If blind intervals is not explicitly set, default to 15 minutes.
 		int blindIntervalMinutes = 15;
 		if (gameDetails.getBlindIntervalMinutes() != null) {
 			blindIntervalMinutes = gameDetails.getBlindIntervalMinutes();
@@ -98,6 +104,10 @@ public class TournamentGameServerImpl implements TournamentGameServer {
 			}
 		}
 
+		//We need a cliff where the re-buys are no longer allowed and also the point where
+		//add-ons are applied. If the game has re-buys OR add-ons and a cliff has not been defined,
+		//we default to 4.
+		//So if the blind interval is 15 minutes: the cliff is applied on the 4th blind level (1 hour into the tournament) 
 		int cliffLevel = 0;
 		if (numberOfRebuys > 0 || addOnsAllowed) {
 			cliffLevel = gameDetails.getCliffLevel() != null?gameDetails.getCliffLevel():4;
@@ -119,7 +129,10 @@ public class TournamentGameServerImpl implements TournamentGameServer {
 			.addOnAmount(addOnAmount)
 			.cliffLevel(cliffLevel)
 			.build();
-					
+
+		//TODO Need to resolve user ID to user object prior to saving.
+		
+		//Save the game.
 		return gameRepository
 				.save(game)
 				.map(TournamentGameServerImpl::gameToGameDetails);			
