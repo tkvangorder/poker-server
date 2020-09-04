@@ -1,14 +1,19 @@
 package org.homepoker.game.cash;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import org.homepoker.common.ValidationException;
 import org.homepoker.domain.game.GameCriteria;
 import org.homepoker.domain.game.GameStatus;
 import org.homepoker.domain.game.GameType;
+import org.homepoker.domain.game.Player;
+import org.homepoker.domain.game.PlayerStatus;
 import org.homepoker.domain.game.cash.CashGame;
 import org.homepoker.domain.game.cash.CashGameDetails;
+import org.homepoker.domain.user.User;
 import org.homepoker.game.GameManager;
+import org.homepoker.user.UserManager;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -18,10 +23,12 @@ import reactor.core.publisher.Mono;
 @Service
 public class CashGameServerImpl implements CashGameServer {
 
-	CashGameRepository gameRepository;
+	private final CashGameRepository gameRepository;
+	private final UserManager userManager;
 	
-	public CashGameServerImpl(CashGameRepository gameRepository) {
+	public CashGameServerImpl(CashGameRepository gameRepository, UserManager userManager) {
 		this.gameRepository = gameRepository;
+		this.userManager = userManager;
 	}
 
 	@Override
@@ -82,12 +89,26 @@ public class CashGameServerImpl implements CashGameServer {
 			.bigBlind(bigBlind)
 			.build();
 
-		//TODO : Need to resolve user ID for owner to a User object prior to save.
-
-		//Save to database.
-		return gameRepository
-				.save(game)
-				.map(CashGameServerImpl::gameToGameDetails);			
+		return
+			//Convert game to mono
+			Mono.just(game)
+				//Combine the game mono with a mono for the owner. This is so we can convert the loginID to User instance
+				.zipWith(getUser(gameDetails.getOwnerLoginId()), (g, user) -> {
+					//Set the owner and add that user as a registered user of the game.
+					g.setOwner(user);
+					g.setPlayers(Arrays.asList(
+						Player.builder()
+							.user(user)
+							.confirmed(true)
+							.status(PlayerStatus.AWAY)
+							.build()
+						));
+					return g;
+				})
+				//Save the game
+				.flatMap(g -> gameRepository.save(g))
+				//And map it back into a game details.
+				.map(CashGameServerImpl::gameToGameDetails);
 	}
 
 	@Override
@@ -111,10 +132,24 @@ public class CashGameServerImpl implements CashGameServer {
 			.startTimestamp(game.getStartTimestamp())
 			.buyInChips(game.getBuyInChips())
 			.buyInAmount(game.getBuyInAmount())
-			.ownerLoginId("TODO")
+			.ownerLoginId(game.getOwner().getLoginId())
 			.smallBlind(game.getSmallBlind())
 			.bigBlind(game.getBigBlind())
 			.numberOfPlayers(game.getPlayers() == null?0:game.getPlayers().size())
 			.build();
+	}
+
+	/**
+	 * Get the user from the user manager, the returned mono will terminate if the
+	 * user ID does not map to a valid user.
+	 * 
+	 * @param userId user ID
+	 * @return Either the user or an error termination if the user does not exist.
+	 */
+	private Mono<User> getUser(String userId) {
+	
+		return userManager
+			.getUser(userId)
+			.switchIfEmpty(Mono.error(new ValidationException("The user [" + userId + "] does not exist.")));	
 	}
 }

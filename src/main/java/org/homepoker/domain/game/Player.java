@@ -2,6 +2,7 @@ package org.homepoker.domain.game;
 
 import org.homepoker.domain.user.User;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -9,12 +10,8 @@ import lombok.Data;
  * @author tyler.vangorder
  */
 @Data
+@Builder
 public class Player {
-
-	/**
-	 * The Id of the player which is unique within the context of a game.
-	 */
-	final Integer id;
 
 	/**
 	 * The user linked to this player.

@@ -3,10 +3,14 @@ package org.homepoker.rsocket;
 import org.homepoker.domain.game.cash.CashGameDetails;
 import org.homepoker.game.cash.CashGameServer;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Controller
 public class RSocketCashGameAdminController {
 
@@ -17,7 +21,9 @@ public class RSocketCashGameAdminController {
 	}
 	
 	@MessageMapping("admin-create-cash-game")
-	Mono<CashGameDetails> createCashGame(CashGameDetails configuration) {
+	Mono<CashGameDetails> createCashGame(CashGameDetails configuration, @AuthenticationPrincipal UserDetails user) {
+		log.info(user.getUsername());
+		configuration.setOwnerLoginId(user.getUsername());
 		return gameServer.createGame(configuration);
 	}
 	

@@ -11,6 +11,7 @@ public enum PlayerStatus {
 	 * Player is active and responding to game events.
 	 */
 	ACTIVE,
+
 	/**
 	 * Player is in a game but idle.
 	 */
