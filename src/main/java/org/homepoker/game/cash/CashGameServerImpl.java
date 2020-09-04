@@ -3,7 +3,6 @@ package org.homepoker.game.cash;
 import java.util.Date;
 
 import org.homepoker.common.ValidationException;
-import org.homepoker.domain.game.Game;
 import org.homepoker.domain.game.GameCriteria;
 import org.homepoker.domain.game.GameStatus;
 import org.homepoker.domain.game.GameType;
@@ -21,6 +20,10 @@ public class CashGameServerImpl implements CashGameServer {
 
 	CashGameRepository gameRepository;
 	
+	public CashGameServerImpl(CashGameRepository gameRepository) {
+		this.gameRepository = gameRepository;
+	}
+
 	@Override
 	public Flux<CashGameDetails> findGames(GameCriteria criteria) {
 		return gameRepository.findAll().map(CashGameServerImpl::gameToGameDetails);
@@ -48,7 +51,7 @@ public class CashGameServerImpl implements CashGameServer {
 		Date startTimestamp = gameDetails.getStartTimestamp();
 
 		GameStatus status = GameStatus.SCHEDULED;
-		if (startTimestamp == null || startTimestamp.after(now)) {
+		if (startTimestamp == null || now.after(startTimestamp)) {
 			startTimestamp = now;
 			status = GameStatus.PAUSED;
 		}
@@ -100,9 +103,18 @@ public class CashGameServerImpl implements CashGameServer {
 		return gameRepository.deleteById(gameId);
 	}
 	
-	private static CashGameDetails gameToGameDetails(Game game) {
+	private static CashGameDetails gameToGameDetails(CashGame game) {
 		return CashGameDetails.builder()
-			//.game(game)
+			.id(game.getId())
+			.name(game.getName())
+			.gameType(game.getGameType())
+			.startTimestamp(game.getStartTimestamp())
+			.buyInChips(game.getBuyInChips())
+			.buyInAmount(game.getBuyInAmount())
+			.ownerLoginId("TODO")
+			.smallBlind(game.getSmallBlind())
+			.bigBlind(game.getBigBlind())
+			.numberOfPlayers(game.getPlayers() == null?0:game.getPlayers().size())
 			.build();
 	}
 }

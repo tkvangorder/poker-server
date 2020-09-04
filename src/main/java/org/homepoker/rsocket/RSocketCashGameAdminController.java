@@ -20,19 +20,13 @@ public class RSocketCashGameAdminController {
 	Mono<CashGameDetails> createCashGame(CashGameDetails configuration) {
 		return gameServer.createGame(configuration);
 	}
-
-
-	@MessageMapping("admin-create-cash-game")
-	Mono<CashGameDetails> createGame(CashGameDetails configuration) {
-		return gameServer.createGame(configuration);
-	}
 	
-	@MessageMapping("game-update")
+	@MessageMapping("admin-update-cash-game")
 	Mono<CashGameDetails> updateGame(CashGameDetails configuration) { 
 		return gameServer.updateGame(configuration);		
 	}
 
-	@MessageMapping("game-delete")
+	@MessageMapping("admin-delete-cash-game")
 	Mono<Void> deleteGame(String gameId) {
 		return gameServer.deleteGame(gameId);
 	}	

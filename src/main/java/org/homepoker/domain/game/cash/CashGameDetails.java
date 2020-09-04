@@ -61,4 +61,11 @@ public class CashGameDetails {
 	 * The number of chips for the big blind (typically 2Xsmall blind)
 	 */
 	private Integer bigBlind;
+	
+	/**
+	 * The number of players registered/playing in the game.
+	 * 
+	 * NOTE: This is a computed field and has no meaning during game creation/update.
+	 */
+	private Integer numberOfPlayers;
 }
