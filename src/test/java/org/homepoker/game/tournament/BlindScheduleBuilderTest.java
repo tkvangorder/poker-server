@@ -2,8 +2,8 @@ package org.homepoker.game.tournament;
 
 import static org.homepoker.game.tournament.BlindScheduleBuilder.blindSchedule;
 
-import org.homepoker.domain.game.BlindSchedule;
-import org.homepoker.domain.game.Blinds;
+import org.homepoker.domain.game.tournament.BlindSchedule;
+import org.homepoker.domain.game.tournament.Blinds;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

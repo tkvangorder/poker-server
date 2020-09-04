@@ -1,7 +1,9 @@
-package org.homepoker.domain.game;
+package org.homepoker.domain.game.tournament;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
+import org.homepoker.domain.game.GameType;
 
 import lombok.Builder;
 import lombok.Data;
@@ -28,7 +30,7 @@ public class TournamentGameDetails {
 	/**
 	 * What type of poker game? Texas Hold'em, Draw, etc.
 	 */
-	private GameType type;
+	private GameType gameType;
 
 	/**
 	 * The scheduled/actual start time of the game.

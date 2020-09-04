@@ -1,10 +1,13 @@
 package org.homepoker.game.cash;
 
-import org.homepoker.domain.game.Blinds;
-import org.homepoker.domain.game.CashGame;
-import org.homepoker.domain.game.CashGameDetails;
+import java.util.Date;
+
 import org.homepoker.domain.game.Game;
 import org.homepoker.domain.game.GameCriteria;
+import org.homepoker.domain.game.GameStatus;
+import org.homepoker.domain.game.GameType;
+import org.homepoker.domain.game.cash.CashGame;
+import org.homepoker.domain.game.cash.CashGameDetails;
 import org.homepoker.game.GameManager;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -30,19 +33,41 @@ public class CashGameServerImpl implements CashGameServer {
 
 	@Override
 	public Mono<CashGameDetails> createGame(CashGameDetails gameDetails) {
-		Assert.notNull(gameDetails, "The game configuration is required.");
+		Assert.notNull(gameDetails, "No game details provided.");
 		Assert.notNull(gameDetails.getName(), "The name is required when creating a game.");
-		Assert.notNull(gameDetails.getType(), "The game type is required when creating a game.");
-		Assert.notNull(gameDetails.getStartTimestamp(), "The start date/time is required when creating a game.");
 		Assert.notNull(gameDetails.getBuyInChips(), "The buy-in chip stack size is required when creating a game.");
 		Assert.notNull(gameDetails.getBuyInAmount(), "The buy-in amount is required when creating a game.");		
 		Assert.notNull(gameDetails.getOwnerLoginId(), "The game owner is required when creating a game.");
 		Assert.notNull(gameDetails.getSmallBlind(), "The small blind must be defined for a cash game.");
-		Assert.notNull(gameDetails.getBigBlind(), "The big blind must be defined for a cash game.");
-		CashGame game = new CashGame(new Blinds(gameDetails.getSmallBlind(), gameDetails.getSmallBlind()));
-		game.setName(gameDetails.getName());
-		game.setType(gameDetails.getType());
-		game.setStartTimestamp(gameDetails.getStartTimestamp());
+
+		Date now = new Date();
+		Date startTimestamp = gameDetails.getStartTimestamp();
+
+		GameStatus status = GameStatus.SCHEDULED;
+		if (startTimestamp == null || startTimestamp.after(now)) {
+			startTimestamp = now;
+			status = GameStatus.PAUSED;
+		}
+		int bigBlind = gameDetails.getSmallBlind() * 2;
+		if (gameDetails.getBigBlind() != null) {
+			bigBlind = gameDetails.getBigBlind();			
+		}
+		GameType gameType = gameDetails.getGameType();
+		if (gameDetails.getGameType() == null) {
+			gameType = GameType.TEXAS_HOLDEM;
+		}
+				
+		CashGame game = CashGame.builder()
+			.name(gameDetails.getName())
+			.gameType(gameType)
+			.status(status)
+			.startTimestamp(startTimestamp)
+			.buyInChips(gameDetails.getBuyInChips())
+			.buyInAmount(gameDetails.getBuyInAmount())
+			.smallBlind(gameDetails.getSmallBlind())
+			.bigBlind(bigBlind)
+			.build();
+		
 //		game.setStartingStack(gameDetails.getStartingChipStack());
 //		game.setOwner(gameDetails.getOwner());
 		return gameRepository

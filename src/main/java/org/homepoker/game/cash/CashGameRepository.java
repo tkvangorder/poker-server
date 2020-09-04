@@ -1,6 +1,6 @@
 package org.homepoker.game.cash;
 
-import org.homepoker.domain.game.CashGame;
+import org.homepoker.domain.game.cash.CashGame;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
 

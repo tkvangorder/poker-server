@@ -1,6 +1,6 @@
 package org.homepoker.rsocket;
 
-import org.homepoker.domain.game.CashGameDetails;
+import org.homepoker.domain.game.cash.CashGameDetails;
 import org.homepoker.game.cash.CashGameServer;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;

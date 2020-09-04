@@ -1,4 +1,4 @@
-package org.homepoker.domain.game;
+package org.homepoker.domain.game.tournament;
 
 import lombok.Value;
 

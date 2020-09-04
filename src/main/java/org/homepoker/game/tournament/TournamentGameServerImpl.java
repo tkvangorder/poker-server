@@ -1,9 +1,14 @@
 package org.homepoker.game.tournament;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 import org.homepoker.domain.game.Game;
 import org.homepoker.domain.game.GameCriteria;
-import org.homepoker.domain.game.TournamentGame;
-import org.homepoker.domain.game.TournamentGameDetails;
+import org.homepoker.domain.game.GameStatus;
+import org.homepoker.domain.game.GameType;
+import org.homepoker.domain.game.tournament.TournamentGame;
+import org.homepoker.domain.game.tournament.TournamentGameDetails;
 import org.homepoker.game.GameManager;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -31,36 +36,90 @@ public class TournamentGameServerImpl implements TournamentGameServer {
 	public Mono<TournamentGameDetails> createGame(TournamentGameDetails gameDetails) {
 		Assert.notNull(gameDetails, "The game configuration is required.");
 		Assert.notNull(gameDetails.getName(), "The name is required when creating a game.");
-		Assert.notNull(gameDetails.getType(), "The game type is required when creating a game.");
-		Assert.notNull(gameDetails.getStartTimestamp(), "The start date/time is required when creating a game.");
+		Assert.notNull(gameDetails.getGameType(), "The game type is required when creating a game.");
 		Assert.notNull(gameDetails.getBuyInChips(), "The buy-in chip stack size is required when creating a game.");
 		Assert.notNull(gameDetails.getBuyInAmount(), "The buy-in amount is required when creating a game.");		
 		Assert.notNull(gameDetails.getOwnerLoginId(), "The game owner is required when creating a game.");
 
-		TournamentGame game = new TournamentGame();
-		game.setName(gameDetails.getName());
-		game.setType(gameDetails.getType());
-		game.setStartTimestamp(gameDetails.getStartTimestamp());
-		game.setStartingStack(gameDetails.getBuyInChips());
-//		game.setOwner(gameDetails.getOwnerLoginId());
-			
+		Date now = new Date();
+		Date startTimestamp = gameDetails.getStartTimestamp();
+
+		GameStatus status = GameStatus.SCHEDULED;
+		if (startTimestamp == null || startTimestamp.after(now)) {
+			startTimestamp = now;
+			status = GameStatus.PAUSED;
+		}
+		GameType gameType = gameDetails.getGameType();
+		if (gameDetails.getGameType() == null) {
+			gameType = GameType.TEXAS_HOLDEM;
+		}
+
+		int blindIntervalMinutes = 15;
 		if (gameDetails.getBlindIntervalMinutes() != null) {
-			game.setBlindIntervalMinutes(gameDetails.getBlindIntervalMinutes());
+			blindIntervalMinutes = gameDetails.getBlindIntervalMinutes();
 		}
-		if (gameDetails.getCliffLevel() != null) {
-			game.setCliffLevel(gameDetails.getCliffLevel());
-		}
+
+		//Re-buys are "enabled" if number of re-buys is greater then 0.
+		//If a re-buy chip amount is not provided, we default it to the buy-in chip amount.
+		//If a re-buy amount is not provided, we default it to the buy amount. 
+		int numberOfRebuys = 0;
+		Integer rebuyChips = null;
+		BigDecimal rebuyAmount = null;
+		
 		if (gameDetails.getNumberOfRebuys() != null) {
-			game.setNumberOfRebuys(gameDetails.getNumberOfRebuys());
+			numberOfRebuys = gameDetails.getNumberOfRebuys();
+			if (numberOfRebuys > 0) {
+				rebuyChips = gameDetails.getRebuyChips();
+				if (rebuyChips == null) {
+					rebuyChips = gameDetails.getBuyInChips();
+				}
+				rebuyAmount = gameDetails.getRebuyAmount();
+				if (rebuyAmount == null) {
+					rebuyAmount = gameDetails.getBuyInAmount();
+				}
+			}
 		}
-		if (gameDetails.getRebuyChips() != null) {
-			game.setRebuyChipAmount(gameDetails.getRebuyChips());
+		
+		//If add-ons are "enabled":
+		//  If a add-on chip amount is not provided, we default it to the buy-in chip amount.
+		//  If a add-on amount is not provided, we default it to the buy amount. 
+		boolean addOnsAllowed = gameDetails.isAddOnAllowed();
+		Integer addOnChips = null;
+		BigDecimal addOnAmount = null;
+		
+		if (addOnsAllowed) {
+			addOnChips = gameDetails.getAddOnChipAmount();
+			if (addOnChips == null) {
+				addOnChips = gameDetails.getBuyInChips();
+			}
+			addOnAmount = gameDetails.getAddOnAmount();
+			if (addOnAmount == null) {
+				addOnAmount = gameDetails.getBuyInAmount();
+			}
 		}
-		if (gameDetails.isAddOnAllowed()) {
-			Assert.notNull(gameDetails.getAddOnChipAmount(), "The add on chip amount is required.");
-			game.setAddOnAllowed(true);
-			game.setAddOnChipAmount(gameDetails.getAddOnChipAmount());
+
+		int cliffLevel = 0;
+		if (numberOfRebuys > 0 || addOnsAllowed) {
+			cliffLevel = gameDetails.getCliffLevel() != null?gameDetails.getCliffLevel():4;
 		}
+		
+		TournamentGame game = TournamentGame.builder()
+			.name(gameDetails.getName())
+			.gameType(gameType)
+			.status(status)
+			.startTimestamp(startTimestamp)
+			.buyInChips(gameDetails.getBuyInChips())
+			.buyInAmount(gameDetails.getBuyInAmount())
+			.blindIntervalMinutes(blindIntervalMinutes)
+			.numberOfRebuys(numberOfRebuys)
+			.rebuyChipAmount(rebuyChips)
+			.rebuyAmount(rebuyAmount)
+			.addOnAllowed(addOnsAllowed)
+			.addOnChipAmount(addOnChips)
+			.addOnAmount(addOnAmount)
+			.cliffLevel(cliffLevel)
+			.build();
+					
 		return gameRepository
 				.save(game)
 				.map(TournamentGameServerImpl::gameToGameDetails);			

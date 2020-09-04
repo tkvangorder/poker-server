@@ -4,8 +4,8 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.homepoker.domain.game.BlindSchedule;
-import org.homepoker.domain.game.Blinds;
+import org.homepoker.domain.game.tournament.BlindSchedule;
+import org.homepoker.domain.game.tournament.Blinds;
 
 /**
  * This builder provides a fluent DSL for creating a blind schedule for a tournament based on number of factors. The idea is

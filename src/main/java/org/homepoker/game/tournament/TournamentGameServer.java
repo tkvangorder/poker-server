@@ -2,7 +2,7 @@ package org.homepoker.game.tournament;
 
 import org.homepoker.common.ValidationException;
 import org.homepoker.domain.game.GameCriteria;
-import org.homepoker.domain.game.TournamentGameDetails;
+import org.homepoker.domain.game.tournament.TournamentGameDetails;
 import org.homepoker.game.GameManager;
 
 import reactor.core.publisher.Flux;

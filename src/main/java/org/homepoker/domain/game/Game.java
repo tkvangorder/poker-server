@@ -1,87 +1,59 @@
 package org.homepoker.domain.game;
 
-import java.util.Date;
 import java.util.List;
 
 import org.homepoker.domain.user.User;
 
-import lombok.Data;
-
 /**
- * This represents the current/persistent state of a poker game. A game is a scheduled (or adhoc) event that defines the format
- * (cash or tournament) and the rules for the game.
- *
+ * An interface to define common properties and operations regardless of the game format : CASH/TOURNAMENT
  *
  * @author tyler.vangorder
  *
  */
-@Data
-public abstract class Game {
+public interface Game {
 
 	/**
 	 * Unique Id of the game.
 	 */
-	private String id;
-
+	public String getId();
+		
 	/**
 	 * A human readable name for the game.
 	 */
-	private String name;
+	public String getName();
+
+	/**
+	 * This is a simple enumeration for the format: CASH or TOURNAMENT 
+	 * @return The game format.
+	 */
+	public GameFormat getGameFormat();
 
 	/**
 	 * What type of poker game? Texas Hold'em, Draw, etc.
 	 */
-	private GameType type;
-
-	/**
-	 * The scheduled/actual start time of the game.
-	 */
-	private Date startTimestamp;
-
-	/**
-	 * The end time is used only when persisting a game once it is over or has been ended
-	 * by the game manager.
-	 */
-	private Date endTime;
-
-	/**
-	 * The number of chips each player will start with.
-	 */
-	private int startingStack;
+	public GameType getGameType();
 	
 	/**
 	 * Current status of the game (useful when persisting the game to storage)
 	 */
-	private GameStatus status;
+	public GameStatus getStatus();
 
 	/**
 	 * User that created/owns the game.
 	 */
-	private User owner;
+	public User getOwner();
 
 	/**
 	 * The players registered/participating in the game.
-	 */
-	private List<Player> registeredPlayers;
+	 */	
+	public List<Player> getPlayers();
 
 	/**
 	 * A game may have multiple tables depending on how many players are registered/participating in the game.
 	 * Each table can hold up to nine players and as players come and go, the players may be moved to different tables.
 	 */
-	private List<Table> tables;
+	public List<Table> getTables();
 
-	/**
-	 * This abstract method must be implemented by concrete implementations. A cash game will have a static blind schedule
-	 * and a tournament's blinds will change based on the blind schedule.
-	 * 
-	 * @return The current small/big blinds
-	 */
-	public abstract Blinds getCurrentBlinds();
 	
-	/**
-	 * This is a simple enumeration for the format: CASH or TOURNAMENT 
-	 * @return The game format.
-	 */
-	public abstract GameFormat getGameFormat();
 
 }
