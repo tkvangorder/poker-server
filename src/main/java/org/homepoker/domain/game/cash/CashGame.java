@@ -3,6 +3,7 @@ package org.homepoker.domain.game.cash;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.homepoker.domain.game.Game;
 import org.homepoker.domain.game.GameFormat;
@@ -61,9 +62,9 @@ public class CashGame implements Game {
 	private User owner;
 
 	/**
-	 * The players registered/participating in the game.
+	 * The players registered/participating in the game. The map is userId -> player.
 	 */
-	private List<Player> players;
+	private Map<String,Player> players;
 
 	/**
 	 * A game may have multiple tables depending on how many players are registered/participating in the game.

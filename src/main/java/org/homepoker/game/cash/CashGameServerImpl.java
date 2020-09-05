@@ -1,7 +1,7 @@
 package org.homepoker.game.cash;
 
-import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.homepoker.common.ValidationException;
 import org.homepoker.domain.game.GameCriteria;
@@ -44,7 +44,38 @@ public class CashGameServerImpl implements CashGameServer {
 
 	@Override
 	public Mono<CashGameDetails> createGame(CashGameDetails gameDetails) {
-		Assert.notNull(gameDetails, "No game details provided.");
+		
+		//Create a new cash game and create a pipeline to apply the game details.
+		CashGame game = CashGame.builder().build();
+		return applyDetailsToGame(game, gameDetails)
+			//Save the game
+			.flatMap(gameRepository::save)
+			//And map it back into a game details.
+			.map(CashGameServerImpl::gameToGameDetails);
+	}
+
+	@Override
+	public Mono<CashGameDetails> updateGame(final CashGameDetails details) {
+		//Find the game by ID
+		return gameRepository.findById(details.getId())
+			.switchIfEmpty(Mono.error(new ValidationException("The cash game [" + details.getId() + "] does not exist.")))
+			//Apply the details
+			.flatMap(g -> applyDetailsToGame(g, details))
+			//Save
+			.flatMap(gameRepository::save)
+			//Map back to a details object.
+			.map(CashGameServerImpl::gameToGameDetails);
+	}
+
+	/**
+	 * This method will apply the game details to the game and return a mono for the cash game.
+	 * 
+	 * @param game The game that will have the details applied to it.
+	 * @param gameDetails The game details.
+	 * @return A mono of the CashGame
+	 */
+	private Mono<CashGame> applyDetailsToGame(CashGame game, CashGameDetails gameDetails) {
+
 		Assert.notNull(gameDetails.getName(), "The name is required when creating a game.");
 		Assert.notNull(gameDetails.getBuyInChips(), "The buy-in chip stack size is required when creating a game.");
 		Assert.notNull(gameDetails.getBuyInAmount(), "The buy-in amount is required when creating a game.");		
@@ -77,53 +108,44 @@ public class CashGameServerImpl implements CashGameServer {
 				throw new ValidationException("The big blind must be larger then the small blind. Typically it should be double the small blind.");
 			}
 		}
-						
-		CashGame game = CashGame.builder()
-			.name(gameDetails.getName())
-			.gameType(gameType)
-			.status(status)
-			.startTimestamp(startTimestamp)
-			.buyInChips(gameDetails.getBuyInChips())
-			.buyInAmount(gameDetails.getBuyInAmount())
-			.smallBlind(gameDetails.getSmallBlind())
-			.bigBlind(bigBlind)
-			.build();
+		
+		game.setName(gameDetails.getName());
+		game.setGameType(gameType);
+		game.setStatus(status);
+		game.setStartTimestamp(startTimestamp);
+		game.setBuyInChips(gameDetails.getBuyInChips());
+		game.setBuyInAmount(gameDetails.getBuyInAmount());
+		game.setSmallBlind(gameDetails.getSmallBlind());
+		game.setBigBlind(bigBlind);		
 
-		return
-			//Convert game to mono
-			Mono.just(game)
-				//Combine the game mono with a mono for the owner. This is so we can convert the loginID to User instance
-				.zipWith(getUser(gameDetails.getOwnerLoginId()), (g, user) -> {
-					//Set the owner and add that user as a registered user of the game.
-					g.setOwner(user);
-					g.setPlayers(Arrays.asList(
-						Player.builder()
-							.user(user)
-							.confirmed(true)
-							.status(PlayerStatus.AWAY)
-							.build()
-						));
-					return g;
-				})
-				//Save the game
-				.flatMap(g -> gameRepository.save(g))
-				//And map it back into a game details.
-				.map(CashGameServerImpl::gameToGameDetails);
+		return Mono
+			.just(game)
+			//Combine the game mono with a mono for the owner. This is so we can convert the loginID to User instance
+			.zipWith(getUser(gameDetails.getOwnerLoginId()), (g, user) -> {
+				//Set the owner and add that user as a registered user of the game.
+				g.setOwner(user);
+				if (g.getPlayers() == null) {
+					g.setPlayers(new HashMap<>());
+				}
+				if (!g.getPlayers().containsKey(user.getLoginId())) {
+					Player player = Player.builder().user(user).confirmed(true).status(PlayerStatus.AWAY).build();					
+					g.getPlayers().put(user.getLoginId(), player);
+				}
+				return g;
+			});
 	}
-
-	@Override
-	public Mono<CashGameDetails> updateGame(final CashGameDetails configuration) {
-		Mono<CashGame> game = gameRepository.findById(configuration.getId());
-		return game
-			.doOnNext(gameRepository::save)
-			.map(CashGameServerImpl::gameToGameDetails);
-	}
-
+	
 	@Override
 	public Mono<Void> deleteGame(String gameId) {
 		return gameRepository.deleteById(gameId);
 	}
 	
+	/**
+	 * Method to convert a cash game into a cash game details.
+	 * 
+	 * @param game The cash game
+	 * @return The details for the cash game.
+	 */
 	private static CashGameDetails gameToGameDetails(CashGame game) {
 		return CashGameDetails.builder()
 			.id(game.getId())

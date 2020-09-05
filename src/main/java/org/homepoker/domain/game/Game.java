@@ -1,6 +1,7 @@
 package org.homepoker.domain.game;
 
 import java.util.List;
+import java.util.Map;
 
 import org.homepoker.domain.user.User;
 
@@ -46,7 +47,7 @@ public interface Game {
 	/**
 	 * The players registered/participating in the game.
 	 */	
-	public List<Player> getPlayers();
+	public Map<String,Player> getPlayers();
 
 	/**
 	 * A game may have multiple tables depending on how many players are registered/participating in the game.

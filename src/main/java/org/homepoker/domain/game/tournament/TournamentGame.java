@@ -3,6 +3,7 @@ package org.homepoker.domain.game.tournament;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.homepoker.domain.game.Game;
 import org.homepoker.domain.game.GameFormat;
@@ -63,7 +64,7 @@ public class TournamentGame implements Game {
 	/**
 	 * The players registered/participating in the game.
 	 */
-	private List<Player> players;
+	private Map<String, Player> players;
 
 	/**
 	 * A game may have multiple tables depending on how many players are registered/participating in the game.
