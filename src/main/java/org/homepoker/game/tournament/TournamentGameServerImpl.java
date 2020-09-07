@@ -1,7 +1,7 @@
 package org.homepoker.game.tournament;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.homepoker.domain.game.Game;
 import org.homepoker.domain.game.GameCriteria;
@@ -44,11 +44,11 @@ public class TournamentGameServerImpl implements TournamentGameServer {
 		//If the a start date is not specified or is before the current date, we just default to
 		//"now" and immediately transition game to a "paused" state. The owner can then choose when they want to
 		//"un-pause" game.
-		Date now = new Date();
-		Date startTimestamp = gameDetails.getStartTimestamp();
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime startTimestamp = gameDetails.getStartTimestamp();
 
 		GameStatus status = GameStatus.SCHEDULED;
-		if (startTimestamp == null || startTimestamp.after(now)) {
+		if (startTimestamp == null || startTimestamp.isAfter(now)) {
 			startTimestamp = now;
 			status = GameStatus.PAUSED;
 		}

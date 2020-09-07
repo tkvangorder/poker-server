@@ -1,7 +1,7 @@
 package org.homepoker.domain.game.tournament;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.homepoker.domain.game.GameType;
 
@@ -35,7 +35,7 @@ public class TournamentGameDetails {
 	/**
 	 * The scheduled/actual start time of the game.
 	 */
-	private Date startTimestamp;
+	private LocalDateTime startTimestamp;
 
 	/**
 	 * The number of chips each player will start with.

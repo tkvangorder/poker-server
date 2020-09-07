@@ -1,7 +1,7 @@
 package org.homepoker.domain.game.cash;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -43,13 +43,13 @@ public class CashGame implements Game {
 	/**
 	 * The scheduled/actual start time of the game.
 	 */
-	private Date startTimestamp;
+	private LocalDateTime startTimestamp;
 
 	/**
 	 * The end time is used only when persisting a game once it is over or has been ended
 	 * by the game manager.
 	 */
-	private Date endTimestamp;
+	private LocalDateTime endTimestamp;
 	
 	/**
 	 * Current status of the game (useful when persisting the game to storage)

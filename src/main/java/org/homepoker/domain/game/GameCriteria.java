@@ -1,13 +1,14 @@
 package org.homepoker.domain.game;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import lombok.Value;
 
 @Value
 public class GameCriteria {
 
+	String name;
 	GameStatus status;
-	Date startTimestamp;
-	Date endTimestamp;
+	LocalDate startDate;
+	LocalDate endDate;
 }

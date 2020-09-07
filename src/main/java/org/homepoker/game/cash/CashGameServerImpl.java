@@ -1,6 +1,8 @@
 package org.homepoker.game.cash;
 
-import java.util.Date;
+import static org.springframework.data.mongodb.core.query.Query.query;
+
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 import org.homepoker.common.ValidationException;
@@ -14,6 +16,8 @@ import org.homepoker.domain.game.cash.CashGameDetails;
 import org.homepoker.domain.user.User;
 import org.homepoker.game.GameManager;
 import org.homepoker.user.UserManager;
+import org.springframework.data.mongodb.core.ReactiveMongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -25,15 +29,43 @@ public class CashGameServerImpl implements CashGameServer {
 
 	private final CashGameRepository gameRepository;
 	private final UserManager userManager;
+	private final ReactiveMongoOperations mongoOperations; 
+
 	
-	public CashGameServerImpl(CashGameRepository gameRepository, UserManager userManager) {
+	public CashGameServerImpl(CashGameRepository gameRepository, UserManager userManager, ReactiveMongoOperations mongoOperations) {
 		this.gameRepository = gameRepository;
 		this.userManager = userManager;
+		this.mongoOperations = mongoOperations;
 	}
 
 	@Override
 	public Flux<CashGameDetails> findGames(GameCriteria criteria) {
-		return gameRepository.findAll().map(CashGameServerImpl::gameToGameDetails);
+
+		if (criteria == null ||
+				(criteria.getStatus() == null && criteria.getStartDate() == null && criteria.getEndDate() == null)) {
+			//No criteria provided, return all games.
+			return gameRepository.findAll().map(CashGameServerImpl::gameToGameDetails);
+		}
+		
+		Criteria mongoCriteria = new Criteria(); 
+
+		if (criteria.getStatus() != null) {
+			mongoCriteria.and("status").equals(criteria.getStatus());
+		}
+		if (criteria.getStartDate() != null) {
+			mongoCriteria.and("startTimestamp").gte(criteria.getStartDate());
+		}
+		if (criteria.getEndDate() != null) {
+			//The end date is intended to include any timestamp in that day, we just add one to the
+			//day to insure we get all games on the end date.
+			mongoCriteria.and("endTimestamp").lte(criteria.getEndDate().plusDays(1));
+		}
+		
+		return mongoOperations.query(CashGame.class)
+			.matching(query(mongoCriteria))
+			.all()
+			.map(CashGameServerImpl::gameToGameDetails);
+		
 	}
 
 	@Override
@@ -67,6 +99,11 @@ public class CashGameServerImpl implements CashGameServer {
 			.map(CashGameServerImpl::gameToGameDetails);
 	}
 
+	@Override
+	public Mono<Void> deleteGame(String gameId) {
+		return gameRepository.deleteById(gameId);
+	}
+
 	/**
 	 * This method will apply the game details to the game and return a mono for the cash game.
 	 * 
@@ -85,11 +122,11 @@ public class CashGameServerImpl implements CashGameServer {
 		//If the a start date is not specified or is before the current date, we just default to
 		//"now" and immediately transition game to a "paused" state. The owner can then choose when they want to
 		//"un-pause" game.
-		Date now = new Date();
-		Date startTimestamp = gameDetails.getStartTimestamp();
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime startTimestamp = gameDetails.getStartTimestamp();
 
 		GameStatus status = GameStatus.SCHEDULED;
-		if (startTimestamp == null || now.after(startTimestamp)) {
+		if (startTimestamp == null || now.isAfter(startTimestamp)) {
 			startTimestamp = now;
 			status = GameStatus.PAUSED;
 		}
@@ -134,12 +171,7 @@ public class CashGameServerImpl implements CashGameServer {
 				return g;
 			});
 	}
-	
-	@Override
-	public Mono<Void> deleteGame(String gameId) {
-		return gameRepository.deleteById(gameId);
-	}
-	
+		
 	/**
 	 * Method to convert a cash game into a cash game details.
 	 * 
