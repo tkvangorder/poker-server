@@ -91,11 +91,18 @@ public class TournamentGameDetails {
 	/**
 	 * The amount of chips given if a player elects to add-on.
 	 */
-	private Integer addOnChipAmount;
+	private Integer addOnChips;
 
 	/**
 	 * The add-on amount in dollars
 	 */
 	private BigDecimal addOnAmount;
+	
+	/**
+	 * The number of players registered/playing in the game.
+	 * 
+	 * NOTE: This is a computed field and has no meaning during game creation/update.
+	 */
+	private Integer numberOfPlayers;
 
 }

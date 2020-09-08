@@ -1,15 +1,24 @@
 package org.homepoker.game.tournament;
 
+import static org.springframework.data.mongodb.core.query.Query.query;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 
-import org.homepoker.domain.game.Game;
+import org.homepoker.common.ValidationException;
 import org.homepoker.domain.game.GameCriteria;
 import org.homepoker.domain.game.GameStatus;
 import org.homepoker.domain.game.GameType;
+import org.homepoker.domain.game.Player;
+import org.homepoker.domain.game.PlayerStatus;
 import org.homepoker.domain.game.tournament.TournamentGame;
 import org.homepoker.domain.game.tournament.TournamentGameDetails;
+import org.homepoker.domain.user.User;
 import org.homepoker.game.GameManager;
+import org.homepoker.user.UserManager;
+import org.springframework.data.mongodb.core.ReactiveMongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -19,11 +28,42 @@ import reactor.core.publisher.Mono;
 @Service
 public class TournamentGameServerImpl implements TournamentGameServer {
 
-	TournamentGameRepository gameRepository;
+	private final TournamentGameRepository gameRepository;
+	private final UserManager userManager;
+	private final ReactiveMongoOperations mongoOperations; 
+
+	public TournamentGameServerImpl(TournamentGameRepository gameRepository, UserManager userManager, ReactiveMongoOperations mongoOperations) {
+		this.gameRepository = gameRepository;
+		this.userManager = userManager;
+		this.mongoOperations = mongoOperations;
+	}
 	
 	@Override
 	public Flux<TournamentGameDetails> findGames(GameCriteria criteria) {
-		return gameRepository.findAll().map(TournamentGameServerImpl::gameToGameDetails);
+		if (criteria == null ||
+				(criteria.getStatus() == null && criteria.getStartDate() == null && criteria.getEndDate() == null)) {
+			//No criteria provided, return all games.
+			return gameRepository.findAll().map(TournamentGameServerImpl::gameToGameDetails);
+		}
+		
+		Criteria mongoCriteria = new Criteria(); 
+
+		if (criteria.getStatus() != null) {
+			mongoCriteria.and("status").is(criteria.getStatus());
+		}
+		if (criteria.getStartDate() != null) {
+			mongoCriteria.and("startTimestamp").gte(criteria.getStartDate());
+		}
+		if (criteria.getEndDate() != null) {
+			//The end date is intended to include any timestamp in that day, we just add one to the
+			//day to insure we get all games on the end date.
+			mongoCriteria.and("endTimestamp").lte(criteria.getEndDate().plusDays(1));
+		}
+		
+		return mongoOperations.query(TournamentGame.class)
+			.matching(query(mongoCriteria))
+			.all()
+			.map(TournamentGameServerImpl::gameToGameDetails);
 	}
 
 	@Override
@@ -34,6 +74,42 @@ public class TournamentGameServerImpl implements TournamentGameServer {
 
 	@Override
 	public Mono<TournamentGameDetails> createGame(TournamentGameDetails gameDetails) {
+
+		//Create a new cash game and create a pipeline to apply the game details.
+		TournamentGame game = TournamentGame.builder().build();
+		return applyDetailsToGame(game, gameDetails)
+			//Save the game
+			.flatMap(gameRepository::save)
+			//And map it back into a game details.
+			.map(TournamentGameServerImpl::gameToGameDetails);
+	}
+
+	@Override
+	public Mono<TournamentGameDetails> updateGame(final TournamentGameDetails details) {
+		//Find the game by ID
+		return gameRepository.findById(details.getId())
+			.switchIfEmpty(Mono.error(new ValidationException("The tournament game [" + details.getId() + "] does not exist.")))
+			//Apply the details
+			.flatMap(g -> applyDetailsToGame(g, details))
+			//Save
+			.flatMap(gameRepository::save)
+			//Map back to a details object.
+			.map(TournamentGameServerImpl::gameToGameDetails);
+	}
+
+	@Override
+	public Mono<Void> deleteGame(String gameId) {
+		return gameRepository.deleteById(gameId);
+	}
+	
+	/**
+	 * This method will apply the game details to the game and return a mono for the cash game.
+	 * 
+	 * @param game The game that will have the details applied to it.
+	 * @param gameDetails The game details.
+	 * @return A mono of the CashGame
+	 */
+	private Mono<TournamentGame> applyDetailsToGame(TournamentGame game, TournamentGameDetails gameDetails) {
 		Assert.notNull(gameDetails, "The game configuration is required.");
 		Assert.notNull(gameDetails.getName(), "The name is required when creating a game.");
 		Assert.notNull(gameDetails.getGameType(), "The game type is required when creating a game.");
@@ -94,7 +170,7 @@ public class TournamentGameServerImpl implements TournamentGameServer {
 		BigDecimal addOnAmount = null;
 		
 		if (addOnsAllowed) {
-			addOnChips = gameDetails.getAddOnChipAmount();
+			addOnChips = gameDetails.getAddOnChips();
 			if (addOnChips == null) {
 				addOnChips = gameDetails.getBuyInChips();
 			}
@@ -113,47 +189,70 @@ public class TournamentGameServerImpl implements TournamentGameServer {
 			cliffLevel = gameDetails.getCliffLevel() != null?gameDetails.getCliffLevel():4;
 		}
 		
-		TournamentGame game = TournamentGame.builder()
-			.name(gameDetails.getName())
-			.gameType(gameType)
-			.status(status)
-			.startTimestamp(startTimestamp)
-			.buyInChips(gameDetails.getBuyInChips())
-			.buyInAmount(gameDetails.getBuyInAmount())
-			.blindIntervalMinutes(blindIntervalMinutes)
-			.numberOfRebuys(numberOfRebuys)
-			.rebuyChipAmount(rebuyChips)
-			.rebuyAmount(rebuyAmount)
-			.addOnAllowed(addOnsAllowed)
-			.addOnChipAmount(addOnChips)
-			.addOnAmount(addOnAmount)
-			.cliffLevel(cliffLevel)
-			.build();
-
-		//TODO Need to resolve user ID to user object prior to saving.
+		game.setName(gameDetails.getName());
+		game.setGameType(gameType);
+		game.setStatus(status);
+		game.setStartTimestamp(startTimestamp);
+		game.setBuyInChips(gameDetails.getBuyInChips());
+		game.setBuyInAmount(gameDetails.getBuyInAmount());
+		game.setBlindIntervalMinutes(blindIntervalMinutes);
+		game.setNumberOfRebuys(numberOfRebuys);
+		game.setRebuyChips(rebuyChips);
+		game.setRebuyAmount(rebuyAmount);
+		game.setAddOnAllowed(addOnsAllowed);
+		game.setAddOnChips(addOnChips);
+		game.setAddOnAmount(addOnAmount);
+		game.setCliffLevel(cliffLevel);
 		
-		//Save the game.
-		return gameRepository
-				.save(game)
-				.map(TournamentGameServerImpl::gameToGameDetails);			
+		return Mono
+				.just(game)
+				//Combine the game mono with a mono for the owner. This is so we can convert the loginID to User instance
+				.zipWith(getUser(gameDetails.getOwnerLoginId()), (g, user) -> {
+					//Set the owner and add that user as a registered user of the game.
+					g.setOwner(user);
+					if (g.getPlayers() == null) {
+						g.setPlayers(new HashMap<>());
+					}
+					if (!g.getPlayers().containsKey(user.getLoginId())) {
+						Player player = Player.builder().user(user).confirmed(true).status(PlayerStatus.AWAY).build();					
+						g.getPlayers().put(user.getLoginId(), player);
+					}
+					return g;
+				});
 	}
-
-	@Override
-	public Mono<TournamentGameDetails> updateGame(final TournamentGameDetails configuration) {
-		Mono<Game> game = gameRepository.findById(configuration.getId());
-		return game
-			.doOnNext(gameRepository::save)
-			.map(TournamentGameServerImpl::gameToGameDetails);
-	}
-
-	@Override
-	public Mono<Void> deleteGame(String gameId) {
-		return gameRepository.deleteById(gameId);
+	private static TournamentGameDetails gameToGameDetails(TournamentGame game) {
+		return TournamentGameDetails.builder()
+			.id(game.getId())
+			.name(game.getName())
+			.gameType(game.getGameType())
+			.startTimestamp(game.getStartTimestamp())
+			.ownerLoginId(game.getOwner().getLoginId())
+			.buyInChips(game.getBuyInChips())
+			.buyInAmount(game.getBuyInAmount())
+			.estimatedTournamentLengthHours(game.getEstimatedTournamentLengthHours())
+			.blindIntervalMinutes(game.getBlindIntervalMinutes())
+			.numberOfRebuys(game.getNumberOfRebuys())
+			.rebuyChips(game.getRebuyChips())
+			.rebuyAmount(game.getRebuyAmount())
+			.addOnAllowed(game.isAddOnAllowed())
+			.addOnChips(game.getAddOnChips())
+			.addOnAmount(game.getAddOnAmount())
+			.cliffLevel(game.getCliffLevel())
+			.numberOfPlayers(game.getPlayers() == null?0:game.getPlayers().size())			
+			.build();
 	}
 	
-	private static TournamentGameDetails gameToGameDetails(Game game) {
-		return TournamentGameDetails.builder()
-			//.game(game)
-			.build();
-	}
+	/**
+	 * Get the user from the user manager, the returned mono will terminate if the
+	 * user ID does not map to a valid user.
+	 * 
+	 * @param userId user ID
+	 * @return Either the user or an error termination if the user does not exist.
+	 */
+	private Mono<User> getUser(String userId) {
+	
+		return userManager
+			.getUser(userId)
+			.switchIfEmpty(Mono.error(new ValidationException("The user [" + userId + "] does not exist.")));	
+	}	
 }

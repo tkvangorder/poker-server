@@ -23,7 +23,7 @@ public class RSocketCashGameAdminController {
 	}
 	
 	@MessageMapping("admin-find-cash-games")
-	Flux<CashGameDetails> findUsers(GameCriteria criteria) {
+	Flux<CashGameDetails> findGames(GameCriteria criteria) {
 		return cashGameServer.findGames(criteria);
 	}
 

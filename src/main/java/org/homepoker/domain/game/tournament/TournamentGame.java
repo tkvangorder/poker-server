@@ -106,7 +106,7 @@ public class TournamentGame implements Game {
 	 * The amount of chips given for a re-buy.
 	 */
 	@Builder.Default
-	private Integer rebuyChipAmount = 0;
+	private Integer rebuyChips = 0;
 
 	/**
 	 * The rebuy-in amount in dollars
@@ -121,7 +121,7 @@ public class TournamentGame implements Game {
 	/**
 	 * The amount of chips given if a player elects to add-on.
 	 */
-	private Integer addOnChipAmount;
+	private Integer addOnChips;
 
 	/**
 	 * The add-on amount in dollars

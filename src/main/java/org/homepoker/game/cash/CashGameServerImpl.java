@@ -50,7 +50,7 @@ public class CashGameServerImpl implements CashGameServer {
 		Criteria mongoCriteria = new Criteria(); 
 
 		if (criteria.getStatus() != null) {
-			mongoCriteria.and("status").equals(criteria.getStatus());
+			mongoCriteria.and("status").is(criteria.getStatus());
 		}
 		if (criteria.getStartDate() != null) {
 			mongoCriteria.and("startTimestamp").gte(criteria.getStartDate());
