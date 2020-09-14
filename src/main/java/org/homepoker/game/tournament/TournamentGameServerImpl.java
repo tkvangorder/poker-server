@@ -98,6 +98,13 @@ public class TournamentGameServerImpl implements TournamentGameServer {
 	}
 
 	@Override
+	public Mono<TournamentGameDetails> getGame(String gameId) {
+		return gameRepository.findById(gameId)
+			.switchIfEmpty(Mono.error(new ValidationException("The tournament game [" + gameId + "] does not exist.")))
+			.map(TournamentGameServerImpl::gameToGameDetails);
+	}	
+	
+	@Override
 	public Mono<Void> deleteGame(String gameId) {
 		return gameRepository.deleteById(gameId);
 	}
@@ -254,5 +261,5 @@ public class TournamentGameServerImpl implements TournamentGameServer {
 		return userManager
 			.getUser(userId)
 			.switchIfEmpty(Mono.error(new ValidationException("The user [" + userId + "] does not exist.")));	
-	}	
+	}
 }

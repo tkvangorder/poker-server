@@ -1,7 +1,11 @@
 package org.homepoker.security;
 
+import java.util.Set;
+
 import org.homepoker.domain.user.User;
 import org.homepoker.user.UserRepository;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -14,6 +18,9 @@ import reactor.core.publisher.Mono;
  * @author tyler.vangorder
  */
 public class ReactiveMongoUserDetailsService implements ReactiveUserDetailsService {
+
+	private static final Set<GrantedAuthority> adminAuthorities = Set.of(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_ADMIN"));
+	private static final Set<GrantedAuthority> userAuthorities = Set.of(new SimpleGrantedAuthority("ROLE_USER"));
 
 	private final UserRepository userRepository;
 	private final SecuritySettings securitySettings;
@@ -30,18 +37,12 @@ public class ReactiveMongoUserDetailsService implements ReactiveUserDetailsServi
 			.flatMap(this::userToUserDetails);
 	}
 
-	private Mono<UserDetails> userToUserDetails(User user) {
+	private Mono<PokerUserDetails> userToUserDetails(User user) {
 
-		String[] roles = new String[] {"USER"};
+		Set<GrantedAuthority> roles = userAuthorities;
 		if (securitySettings.adminUsers.contains(user.getLoginId())) {
-			roles = new String[] {"USER","ADMIN"};
+			roles = adminAuthorities;
 		}
-		return Mono.just(
-			org.springframework.security.core.userdetails.User.builder()
-			.username(user.getLoginId())
-			.password(user.getPassword())
-			.roles(roles)
-			.build());
+		return Mono.just(new PokerUserDetails(user, roles));
 	}
-	
 }

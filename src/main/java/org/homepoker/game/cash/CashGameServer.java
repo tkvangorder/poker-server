@@ -21,8 +21,8 @@ public interface CashGameServer {
 	/**
 	 * Get the game manager for a given gameId.
 	 * 
-	 * @param gameId
-	 * @return
+	 * @param gameId The game Id
+	 * @return A game manager for the game or an error if the game does not exist.
 	 */
 	GameManager getGameManger(String gameId);
 
@@ -45,6 +45,17 @@ public interface CashGameServer {
 	 * @throws ValidationException If the game does not exist or a validation error occurs 
 	 */
 	Mono<CashGameDetails> updateGame(CashGameDetails configuration);
+
+	/**
+	 * Retrieve the game details for an existing game.
+	 * 
+	 * @param gameId The Id of the game.
+	 * @return The game details or an error if the game does not exist.
+	 * 
+	 * @throws ValidationException If the game does not exist or a validation error occurs 
+	 */
+	Mono<CashGameDetails> getGame(String gameId);
+
 	
 	/**
 	 * Delete an existing game.

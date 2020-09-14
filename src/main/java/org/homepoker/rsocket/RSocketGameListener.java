@@ -1,6 +1,5 @@
 package org.homepoker.rsocket;
 
-import org.homepoker.common.Event;
 import org.homepoker.domain.user.User;
 import org.homepoker.game.UserGameListener;
 import org.homepoker.game.event.GameEvent;
@@ -11,11 +10,11 @@ import reactor.core.publisher.Flux;
 public class RSocketGameListener implements UserGameListener {
 
 	private final User user;
-	private final EmitterProcessor<Event> emitter;
+	private final EmitterProcessor<GameEvent> emitter;
 	
 	public RSocketGameListener(User user) {
 		this.user = user;
-		this.emitter = EmitterProcessor.<Event>create();
+		this.emitter = EmitterProcessor.<GameEvent>create();
 	}
 
 	@Override
@@ -28,7 +27,7 @@ public class RSocketGameListener implements UserGameListener {
 		emitter.onNext(event);
 	}
 	
-	Flux<Event> getEventStream() {
+	Flux<GameEvent> getEventStream() {
 		return emitter.log();
 	}
 

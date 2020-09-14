@@ -30,7 +30,7 @@ public interface TournamentGameServer {
 	 * Create/schedule a new game. 
 	 * 
 	 * The game state passed into this method will be validated.
-	 * @param The passed in game state is used to persist a new game.
+	 * @param gameDetails The game details to be used to persist a new game.
 	 * @return The fully persisted game state. If the game's start date is past the current time-stamp, it will be marked as "PAUSED"
 	 * @throws ValidationException If a validation error occurs 
 	 */
@@ -39,13 +39,23 @@ public interface TournamentGameServer {
 	/**
 	 * Update an existing game.
 	 * 
-	 * @param The game details to be applied to the game.
-	 * @return The updated game state.
+	 * @param gameDetails The game details to be applied to the game.
+	 * @return The updated game state or an error if the game does not exist or there is a validation error.
 	 * 
 	 * @throws ValidationException If the game does not exist or a validation error occurs 
 	 */
-	Mono<TournamentGameDetails> updateGame(TournamentGameDetails configuration);
+	Mono<TournamentGameDetails> updateGame(TournamentGameDetails gameDetails);
 	
+	/**
+	 * Retrieve the game details for an existing game.
+	 * 
+	 * @param gameId The Id of the game.
+	 * @return The game details or an error if the game does not exist.
+	 * 
+	 * @throws ValidationException If the game does not exist or a validation error occurs 
+	 */
+	Mono<TournamentGameDetails> getGame(String gameId);
+
 	/**
 	 * Delete an existing game.
 	 * 

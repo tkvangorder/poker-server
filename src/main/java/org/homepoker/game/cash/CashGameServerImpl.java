@@ -100,6 +100,13 @@ public class CashGameServerImpl implements CashGameServer {
 	}
 
 	@Override
+	public Mono<CashGameDetails> getGame(String gameId) {
+		return gameRepository.findById(gameId)
+			.switchIfEmpty(Mono.error(new ValidationException("The cash game [" + gameId + "] does not exist.")))
+			.map(CashGameServerImpl::gameToGameDetails);
+	}	
+	
+	@Override
 	public Mono<Void> deleteGame(String gameId) {
 		return gameRepository.deleteById(gameId);
 	}
