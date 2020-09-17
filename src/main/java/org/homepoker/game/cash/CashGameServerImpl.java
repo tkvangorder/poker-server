@@ -4,6 +4,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.homepoker.common.ValidationException;
 import org.homepoker.domain.game.GameCriteria;
@@ -15,6 +16,7 @@ import org.homepoker.domain.game.cash.CashGame;
 import org.homepoker.domain.game.cash.CashGameDetails;
 import org.homepoker.domain.user.User;
 import org.homepoker.game.GameManager;
+import org.homepoker.game.GameManagerImpl;
 import org.homepoker.user.UserManager;
 import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -31,6 +33,7 @@ public class CashGameServerImpl implements CashGameServer {
 	private final UserManager userManager;
 	private final ReactiveMongoOperations mongoOperations; 
 
+	private final Map<String, GameManager> gameManagerMap = new HashMap<>();
 	
 	public CashGameServerImpl(CashGameRepository gameRepository, UserManager userManager, ReactiveMongoOperations mongoOperations) {
 		this.gameRepository = gameRepository;
@@ -69,9 +72,18 @@ public class CashGameServerImpl implements CashGameServer {
 	}
 
 	@Override
-	public GameManager getGameManger(String gameId) {
-		// TODO Auto-generated method stub
-		return null;
+	public synchronized GameManager getGameManger(String gameId) {
+		return gameManagerMap.computeIfAbsent(gameId,
+			id -> {
+				return gameRepository
+						.findById(id)
+						.switchIfEmpty(Mono.error(new ValidationException("The cash game [" + gameId + "] does not exist.")))
+						.map(g-> {
+							//Create a game manager for the game.
+							GameManager manager = new GameManagerImpl(g);
+							return manager;
+						}).block();
+			});
 	}
 
 	@Override

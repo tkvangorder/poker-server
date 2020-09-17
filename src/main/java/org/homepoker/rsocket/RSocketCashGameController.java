@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Controller
 public class RSocketCashGameController {
@@ -45,23 +46,32 @@ public class RSocketCashGameController {
 	}
 	
 	@MessageMapping(RSocketRoutes.ROUTE_CASH_REGISTER_FOR_GAME)
-	Mono<CashGameDetails> registerForGame(String gameId, @AuthenticationPrincipal PokerUserDetails user) {
-		getGameManager(gameId).registerPlayer(user);
-		return gameServer.getGame(gameId);
+	Mono<Void> registerForGame(String gameId, @AuthenticationPrincipal PokerUserDetails user) {
+		return Mono.fromCallable(() -> getGameManager(gameId))
+			.subscribeOn(Schedulers.elastic())
+			.doOnSuccess(gm -> gm.registerPlayer(user))
+			.then();
 	}
 
 	@MessageMapping(RSocketRoutes.ROUTE_CASH_JOIN_GAME)
 	Flux<GameEvent> joinGame(final String gameId, @AuthenticationPrincipal PokerUserDetails user) {
 		//Create an RSocket game listener and register it with the game manager.
 		RSocketGameListener listener = new RSocketGameListener(user);
-		getGameManager(gameId).addGameListener(listener);
-		return listener.getEventStream();
-		
+		return Mono.fromCallable(() -> getGameManager(gameId))
+			.subscribeOn(Schedulers.elastic())
+			.flatMapMany(gm -> {
+				gm.addGameListener(listener);
+				return listener.getEventStream();
+			});
 	}
 	
 	@MessageMapping(RSocketRoutes.ROUTE_CASH_GAME_COMMAND)
-	void gameCommand(GameCommand command, @AuthenticationPrincipal PokerUserDetails user) {
-		getGameManager(command.getGameId()).submitUserCommand(user, command.getCommand());
+	Mono<Void> gameCommand(GameCommand command, @AuthenticationPrincipal PokerUserDetails user) {
+		return Mono.fromCallable(() -> getGameManager(command.getGameId()))
+				.subscribeOn(Schedulers.elastic())
+				.doOnSuccess(gm -> gm.submitUserCommand(user, command.getCommand()))
+				.then();
+
 	}
 	
 	private GameManager getGameManager(String gameId) {
