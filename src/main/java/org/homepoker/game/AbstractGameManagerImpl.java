@@ -12,12 +12,6 @@ import reactor.core.publisher.Mono;
 
 public abstract class AbstractGameManagerImpl implements GameManager {
 
-	private final Game game;
-
-	public AbstractGameManagerImpl(Game game) {
-		this.game = game;
-	}
-
 	@Override
 	public Player registerPlayer(User user) {
 		// TODO Auto-generated method stub
@@ -65,5 +59,6 @@ public abstract class AbstractGameManagerImpl implements GameManager {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
+	protected abstract Game getGame();
 }

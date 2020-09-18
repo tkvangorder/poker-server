@@ -33,6 +33,8 @@ public class CashGameServerImpl implements CashGameServer {
 	private final UserManager userManager;
 	private final ReactiveMongoOperations mongoOperations; 
 
+	//I am using a non-blocking variant of ConcurrentHashMap to I can use an atomic computeIfAbsent
+	//without blocking the event loop.
 	private final Map<String, Mono<GameManager>> gameManagerMap = new NonBlockingHashMap<>();
 	
 	public CashGameServerImpl(CashGameRepository gameRepository, UserManager userManager, ReactiveMongoOperations mongoOperations) {
@@ -73,9 +75,16 @@ public class CashGameServerImpl implements CashGameServer {
 
 	@Override
 	public Mono<GameManager> getGameManger(String gameId) {
+		//There is a map of eagerly fetched Mono<GameManager> instances. If the game manager is
+		//present we pass a new mono to the subscriber (via the defer)
+		
 		return Mono.defer(() -> {
 			return gameManagerMap.computeIfAbsent(gameId,
 					(id) -> {
+						//If the game manager is not yet in memory, we retrieve the game from
+						//the database and materialize the game manager. (Note the cache()) on the end, 
+						//we want to cache the mono retrieved from the database, so we dont keep
+						//retrieving it on subsequent calls.
 						return gameRepository
 						.findById(gameId)
 						.doOnSuccess(g -> g.setName("Excellent"))
