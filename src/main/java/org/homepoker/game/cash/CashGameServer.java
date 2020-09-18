@@ -24,7 +24,7 @@ public interface CashGameServer {
 	 * @param gameId The game Id
 	 * @return A game manager for the game or an error if the game does not exist.
 	 */
-	GameManager getGameManger(String gameId);
+	Mono<GameManager> getGameManger(String gameId);
 
 	/**
 	 * Create/schedule a new game. 

@@ -16,8 +16,8 @@ import org.homepoker.domain.game.cash.CashGame;
 import org.homepoker.domain.game.cash.CashGameDetails;
 import org.homepoker.domain.user.User;
 import org.homepoker.game.GameManager;
-import org.homepoker.game.GameManagerImpl;
 import org.homepoker.user.UserManager;
+import org.jctools.maps.NonBlockingHashMap;
 import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ public class CashGameServerImpl implements CashGameServer {
 	private final UserManager userManager;
 	private final ReactiveMongoOperations mongoOperations; 
 
-	private final Map<String, GameManager> gameManagerMap = new HashMap<>();
+	private final Map<String, Mono<GameManager>> gameManagerMap = new NonBlockingHashMap<>();
 	
 	public CashGameServerImpl(CashGameRepository gameRepository, UserManager userManager, ReactiveMongoOperations mongoOperations) {
 		this.gameRepository = gameRepository;
@@ -72,20 +72,19 @@ public class CashGameServerImpl implements CashGameServer {
 	}
 
 	@Override
-	public synchronized GameManager getGameManger(String gameId) {
-		return gameManagerMap.computeIfAbsent(gameId,
-			id -> {
-				return gameRepository
-						.findById(id)
+	public Mono<GameManager> getGameManger(String gameId) {
+		return Mono.defer(() -> {
+			return gameManagerMap.computeIfAbsent(gameId,
+					(id) -> {
+						return gameRepository
+						.findById(gameId)
+						.doOnSuccess(g -> g.setName("Excellent"))
 						.switchIfEmpty(Mono.error(new ValidationException("The cash game [" + gameId + "] does not exist.")))
-						.map(g-> {
-							//Create a game manager for the game.
-							GameManager manager = new GameManagerImpl(g);
-							return manager;
-						}).block();
-			});
+						.flatMap(g -> Mono.just((GameManager)new CashGameManager(g))).cache();
+					});
+		});
 	}
-
+	
 	@Override
 	public Mono<CashGameDetails> createGame(CashGameDetails gameDetails) {
 		

@@ -1,9 +1,7 @@
 package org.homepoker.rsocket;
 
-import org.homepoker.common.InvalidGameException;
 import org.homepoker.domain.game.GameCriteria;
 import org.homepoker.domain.game.cash.CashGameDetails;
-import org.homepoker.game.GameManager;
 import org.homepoker.game.cash.CashGameServer;
 import org.homepoker.game.event.GameEvent;
 import org.homepoker.security.PokerUserDetails;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Controller;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 @Controller
 public class RSocketCashGameController {
@@ -47,38 +44,26 @@ public class RSocketCashGameController {
 	
 	@MessageMapping(RSocketRoutes.ROUTE_CASH_REGISTER_FOR_GAME)
 	Mono<Void> registerForGame(String gameId, @AuthenticationPrincipal PokerUserDetails user) {
-		return Mono.fromCallable(() -> getGameManager(gameId))
-			.subscribeOn(Schedulers.elastic())
-			.doOnSuccess(gm -> gm.registerPlayer(user))
-			.then();
+		return gameServer.getGameManger(gameId)
+				.doOnSuccess(gm -> gm.registerPlayer(user)).then();
 	}
 
 	@MessageMapping(RSocketRoutes.ROUTE_CASH_JOIN_GAME)
 	Flux<GameEvent> joinGame(final String gameId, @AuthenticationPrincipal PokerUserDetails user) {
 		//Create an RSocket game listener and register it with the game manager.
 		RSocketGameListener listener = new RSocketGameListener(user);
-		return Mono.fromCallable(() -> getGameManager(gameId))
-			.subscribeOn(Schedulers.elastic())
-			.flatMapMany(gm -> {
-				gm.addGameListener(listener);
-				return listener.getEventStream();
-			});
+
+		return gameServer.getGameManger(gameId)
+				.doOnSuccess(gm -> gm.addGameListener(listener))
+				.flatMapMany(gm -> listener.getEventStream());
 	}
 	
 	@MessageMapping(RSocketRoutes.ROUTE_CASH_GAME_COMMAND)
 	Mono<Void> gameCommand(GameCommand command, @AuthenticationPrincipal PokerUserDetails user) {
-		return Mono.fromCallable(() -> getGameManager(command.getGameId()))
-				.subscribeOn(Schedulers.elastic())
-				.doOnSuccess(gm -> gm.submitUserCommand(user, command.getCommand()))
-				.then();
+		return gameServer.getGameManger(command.getGameId())
+				.doOnSuccess(
+					gm -> gm.submitUserCommand(user, command.getCommand())
+				).then();
 
 	}
-	
-	private GameManager getGameManager(String gameId) {
-		GameManager manager = gameServer.getGameManger(gameId);
-		if (manager == null) {
-			throw new InvalidGameException("The game ID [" + gameId + "] does not exist.");
-		}
-		return manager;
-	}	
 }
