@@ -1,9 +1,8 @@
 package org.homepoker.rsocket;
 
-import org.homepoker.common.InvalidGameException;
+import org.homepoker.common.Command;
 import org.homepoker.domain.game.GameCriteria;
 import org.homepoker.domain.game.tournament.TournamentGameDetails;
-import org.homepoker.game.GameManager;
 import org.homepoker.game.event.GameEvent;
 import org.homepoker.game.tournament.TournamentGameServer;
 import org.homepoker.security.PokerUserDetails;
@@ -40,8 +39,11 @@ public class RSocketTournamentGameController {
 	}	
 	
 	@MessageMapping("tournament-game-command")
-	void gameCommand(GameCommand command, @AuthenticationPrincipal PokerUserDetails user) {
-		getGameManager(command.getGameId()).submitUserCommand(user, command.getCommand());		
+	Mono<Void> gameCommand(GameCommand command, @AuthenticationPrincipal PokerUserDetails user) {
+		return gameServer.getGameManger(command.getGameId())
+				.doOnSuccess(
+					gm -> gm.submitCommand(Command.asRegisterUser(user))
+				).then();
 	}
 
 	@MessageMapping(RSocketRoutes.ROUTE_TOURNAMENT_FIND_GAMES)
@@ -50,24 +52,20 @@ public class RSocketTournamentGameController {
 	}
 	
 	@MessageMapping(RSocketRoutes.ROUTE_TOURNAMENT_REGISTER_FOR_GAME)
-	Mono<TournamentGameDetails> registerForGame(String gameId, @AuthenticationPrincipal PokerUserDetails user) {
-		getGameManager(gameId).registerPlayer(user);
-		return gameServer.getGame(gameId);
+	Mono<Void> registerForGame(String gameId, @AuthenticationPrincipal PokerUserDetails user) {
+		return gameServer.getGameManger(gameId)
+				.doOnSuccess(
+					gm -> gm.submitCommand(Command.asRegisterUser(user))
+				).then();
 	}
 
 	@MessageMapping(RSocketRoutes.ROUTE_TOURNAMENT_JOIN_GAME)
 	Flux<GameEvent> joinGame(final String gameId, @AuthenticationPrincipal PokerUserDetails user) {
 		//Create an RSocket game listener and register it with the game manager.
 		RSocketGameListener listener = new RSocketGameListener(user);
-		getGameManager(gameId).addGameListener(listener);
-		return listener.getEventStream();
+		return gameServer.getGameManger(gameId)
+				.doOnSuccess(gm -> gm.addGameListener(listener))
+				.flatMapMany(gm -> listener.getEventStream());
 	}
 
-	private GameManager getGameManager(String gameId) {
-		GameManager manager = gameServer.getGameManger(gameId);
-		if (manager == null) {
-			throw new InvalidGameException("The game ID [" + gameId + "] does not exist.");
-		}
-		return manager;
-	}	
 }

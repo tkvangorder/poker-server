@@ -1,5 +1,6 @@
 package org.homepoker.rsocket;
 
+import org.homepoker.common.Command;
 import org.homepoker.domain.game.GameCriteria;
 import org.homepoker.domain.game.cash.CashGameDetails;
 import org.homepoker.game.cash.CashGameServer;
@@ -44,8 +45,11 @@ public class RSocketCashGameController {
 	
 	@MessageMapping(RSocketRoutes.ROUTE_CASH_REGISTER_FOR_GAME)
 	Mono<Void> registerForGame(String gameId, @AuthenticationPrincipal PokerUserDetails user) {
+
 		return gameServer.getGameManger(gameId)
-				.doOnSuccess(gm -> gm.registerPlayer(user)).then();
+				.doOnSuccess(
+					gm -> gm.submitCommand(Command.asRegisterUser(user))
+				).then();
 	}
 
 	@MessageMapping(RSocketRoutes.ROUTE_CASH_JOIN_GAME)
@@ -62,7 +66,7 @@ public class RSocketCashGameController {
 	Mono<Void> gameCommand(GameCommand command, @AuthenticationPrincipal PokerUserDetails user) {
 		return gameServer.getGameManger(command.getGameId())
 				.doOnSuccess(
-					gm -> gm.submitUserCommand(user, command.getCommand())
+					gm -> gm.submitCommand(Command.asRegisterUser(user))
 				).then();
 
 	}

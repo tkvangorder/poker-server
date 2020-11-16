@@ -67,7 +67,7 @@ public class TournamentGameServerImpl implements TournamentGameServer {
 	}
 
 	@Override
-	public GameManager getGameManger(String gameId) {
+	public Mono<GameManager> getGameManger(String gameId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

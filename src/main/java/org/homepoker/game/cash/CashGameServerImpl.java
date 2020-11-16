@@ -140,6 +140,9 @@ public class CashGameServerImpl implements CashGameServer {
 	 */
 	private Mono<CashGame> applyDetailsToGame(CashGame game, CashGameDetails gameDetails) {
 
+		if (game.getStatus() != GameStatus.SCHEDULED) {
+			throw new ValidationException("You can only update the details of the game prior to it starting");
+		}
 		Assert.notNull(gameDetails.getName(), "The name is required when creating a game.");
 		Assert.notNull(gameDetails.getBuyInChips(), "The buy-in chip stack size is required when creating a game.");
 		Assert.notNull(gameDetails.getBuyInAmount(), "The buy-in amount is required when creating a game.");		

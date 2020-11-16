@@ -24,7 +24,7 @@ public interface TournamentGameServer {
 	 * @param gameId
 	 * @return
 	 */
-	GameManager getGameManger(String gameId);
+	Mono<GameManager> getGameManger(String gameId);
 
 	/**
 	 * Create/schedule a new game. 
