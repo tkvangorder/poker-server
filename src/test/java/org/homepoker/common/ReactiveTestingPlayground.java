@@ -26,52 +26,52 @@ import reactor.tools.agent.ReactorDebugAgent;
  */
 class ReactiveTestingPlayground {
 
-	private static final Logger logger = LoggerFactory.getLogger(PokerUtilitiesTest.class);
+				private static final Logger logger = LoggerFactory.getLogger(PokerUtilitiesTest.class);
 
-	static {
-		ReactorDebugAgent.init();
-	}
-	
-	@Test
-	void reactorPlayground() throws InterruptedException {
-		List<String> stringValues =
-			Flux.interval(Duration.ofMillis(100))
-			.take(10)
-			.flatMap(yo -> Flux.just(yo.toString()))
-			.doOnNext(this::info)
-			.toStream().collect(Collectors.toList());
-			
-		assertThat(stringValues).hasSize(10);	
-		
-//		Thread.sleep(2000);
-		
-	}
+				static {
+								ReactorDebugAgent.init();
+				}
 
-	private void info(String letter) {
-		logger.info("LETTER : " + letter);
-	}
+				@Test
+				void reactorPlayground() throws InterruptedException {
+								List<String> stringValues =
+										Flux.interval(Duration.ofMillis(100))
+												.take(10)
+												.flatMap(yo -> Flux.just(yo.toString()))
+												.doOnNext(this::info)
+												.toStream().collect(Collectors.toList());
 
-	
-	/**
-	 * Testing how to run a set of mono's (that are intentionally delayed for 2 seconds) can be
-	 * run in parallel. Note: This can be achieved with merge, but if you use concat, the monos
-	 * will be run serially.  
-	 */
-	@Test
-	@DisplayName("Test parallel processing of Monos")
-	@Timeout(3)
-	void testParallel() {
-		List<Mono<String>> descriptions = new ArrayList<>();
-		//First setup 200 monos with a second second delay for each.
-		for (int index = 0; index < 200; index++) {
-			descriptions.add(Mono.just("Index " + index).delayElement(Duration.ofSeconds(2)));
-		}
+								assertThat(stringValues).hasSize(10);
+
+			//		Thread.sleep(2000);
 		
-		//If we process in parallel, the time to complete the flux of those monos should be around 2 seconds.
-		long start = System.currentTimeMillis();
-		List <String> results = Flux.merge(descriptions).toStream().collect(Collectors.toList());
-		System.out.println("Done with Processing in " + (System.currentTimeMillis() - start) + "ms");
-		results.stream().forEach(System.out::println);
-		assertThat(results).hasSize(200);
-	}
+				}
+
+				private void info(String letter) {
+								logger.info("LETTER : " + letter);
+				}
+
+
+				/**
+				 * Testing how to run a set of mono's (that are intentionally delayed for 2 seconds) can be
+				 * run in parallel. Note: This can be achieved with merge, but if you use concat, the monos
+				 * will be run serially.  
+				 */
+				@Test
+				@DisplayName("Test parallel processing of Monos")
+				@Timeout(3)
+				void testParallel() {
+								List<Mono<String>> descriptions = new ArrayList<>();
+								//First setup 200 monos with a second second delay for each.
+								for (int index = 0; index < 200; index++) {
+												descriptions.add(Mono.just("Index " + index).delayElement(Duration.ofSeconds(2)));
+								}
+
+								//If we process in parallel, the time to complete the flux of those monos should be around 2 seconds.
+								long start = System.currentTimeMillis();
+								List<String> results = Flux.merge(descriptions).toStream().collect(Collectors.toList());
+								System.out.println("Done with Processing in " + (System.currentTimeMillis() - start) + "ms");
+								results.stream().forEach(System.out::println);
+								assertThat(results).hasSize(200);
+				}
 }

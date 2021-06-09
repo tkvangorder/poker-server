@@ -7,8 +7,8 @@ import lombok.Value;
 @Value
 public class GameCriteria {
 
-	String name;
-	GameStatus status;
-	LocalDate startDate;
-	LocalDate endDate;
+				String name;
+				GameStatus status;
+				LocalDate startDate;
+				LocalDate endDate;
 }

@@ -6,15 +6,15 @@ import org.homepoker.game.AbstractGameManagerImpl;
 
 public class CashGameManager extends AbstractGameManagerImpl {
 
-	private CashGame game;
+				private CashGame game;
 
-	public CashGameManager(CashGame game) {
-		this.game = game;
-	}
+				public CashGameManager(CashGame game) {
+								this.game = game;
+				}
 
-	@Override
-	protected Game getGame() {
-		return game;
-	}
-	
+				@Override
+				protected Game getGame() {
+								return game;
+				}
+
 }

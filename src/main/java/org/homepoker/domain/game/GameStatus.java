@@ -5,8 +5,8 @@ package org.homepoker.domain.game;
  * @author tyler.vangorder
  */
 public enum GameStatus {
-	SCHEDULED,
-	ACTIVE,
-	PAUSED,
-	COMPLETED
+				SCHEDULED,
+				ACTIVE,
+				PAUSED,
+				COMPLETED
 }

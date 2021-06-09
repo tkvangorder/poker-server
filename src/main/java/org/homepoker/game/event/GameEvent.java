@@ -7,5 +7,5 @@ package org.homepoker.game.event;
  *
  */
 public interface GameEvent {
-	Integer getGameId();
+				Integer getGameId();
 }

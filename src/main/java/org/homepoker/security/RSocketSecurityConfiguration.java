@@ -20,28 +20,28 @@ import org.springframework.security.rsocket.core.PayloadSocketAcceptorIntercepto
 @EnableConfigurationProperties(SecuritySettings.class)
 public class RSocketSecurityConfiguration {
 
-    @Bean
-    RSocketMessageHandler messageHandler(RSocketStrategies strategies) {
-        RSocketMessageHandler handler = new RSocketMessageHandler();
-        handler.getArgumentResolverConfigurer().addCustomResolver(new AuthenticationPrincipalArgumentResolver());
-        handler.setRSocketStrategies(strategies);
-        return handler;
-    }
-    
-    @Bean
-    ReactiveUserDetailsService userDetailsService(UserRepository userRepository, SecuritySettings securitySettings) {
-    	return new ReactiveMongoUserDetailsService(userRepository, securitySettings);
-    }
-    
-    @Bean
-    PayloadSocketAcceptorInterceptor authorization(RSocketSecurity security) {
-        security.authorizePayload(authorize -> authorize
-        		.setup().permitAll()
-        		.route("user-manager-register-user").hasRole("ANONYMOUS")
-        		.anyExchange().hasAnyRole("USER")
-        ).simpleAuthentication(Customizer.withDefaults());
-        return security.build();
-    }   
-    
+				@Bean
+				RSocketMessageHandler messageHandler(RSocketStrategies strategies) {
+								RSocketMessageHandler handler = new RSocketMessageHandler();
+								handler.getArgumentResolverConfigurer().addCustomResolver(new AuthenticationPrincipalArgumentResolver());
+								handler.setRSocketStrategies(strategies);
+								return handler;
+				}
+
+				@Bean
+				ReactiveUserDetailsService userDetailsService(UserRepository userRepository, SecuritySettings securitySettings) {
+								return new ReactiveMongoUserDetailsService(userRepository, securitySettings);
+				}
+
+				@Bean
+				PayloadSocketAcceptorInterceptor authorization(RSocketSecurity security) {
+								security.authorizePayload(authorize -> authorize
+										.setup().permitAll()
+										.route("user-manager-register-user").hasRole("ANONYMOUS")
+										.anyExchange().hasAnyRole("USER")
+								).simpleAuthentication(Customizer.withDefaults());
+								return security.build();
+				}
+
 
 }

@@ -5,5 +5,5 @@ package org.homepoker.domain.game;
  * @author tyler.vangorder
  */
 public enum GameType {
-	TEXAS_HOLDEM
+				TEXAS_HOLDEM
 }

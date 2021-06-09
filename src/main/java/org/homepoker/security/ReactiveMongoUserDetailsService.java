@@ -19,30 +19,30 @@ import reactor.core.publisher.Mono;
  */
 public class ReactiveMongoUserDetailsService implements ReactiveUserDetailsService {
 
-	private static final Set<GrantedAuthority> adminAuthorities = Set.of(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_ADMIN"));
-	private static final Set<GrantedAuthority> userAuthorities = Set.of(new SimpleGrantedAuthority("ROLE_USER"));
+				private static final Set<GrantedAuthority> adminAuthorities = Set.of(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_ADMIN"));
+				private static final Set<GrantedAuthority> userAuthorities = Set.of(new SimpleGrantedAuthority("ROLE_USER"));
 
-	private final UserRepository userRepository;
-	private final SecuritySettings securitySettings;
-	
-	
-	public ReactiveMongoUserDetailsService(UserRepository userRepository, SecuritySettings securitySettings) {
-		this.userRepository = userRepository;
-		this.securitySettings = securitySettings;
-	}
+				private final UserRepository userRepository;
+				private final SecuritySettings securitySettings;
 
-	@Override
-	public Mono<UserDetails> findByUsername(String userLogin) {
-		return userRepository.findByLoginId(userLogin)
-			.flatMap(this::userToUserDetails);
-	}
 
-	private Mono<PokerUserDetails> userToUserDetails(User user) {
+				public ReactiveMongoUserDetailsService(UserRepository userRepository, SecuritySettings securitySettings) {
+								this.userRepository = userRepository;
+								this.securitySettings = securitySettings;
+				}
 
-		Set<GrantedAuthority> roles = userAuthorities;
-		if (securitySettings.adminUsers.contains(user.getLoginId())) {
-			roles = adminAuthorities;
-		}
-		return Mono.just(new PokerUserDetails(user, roles));
-	}
+				@Override
+				public Mono<UserDetails> findByUsername(String userLogin) {
+								return userRepository.findByLoginId(userLogin)
+										.flatMap(this::userToUserDetails);
+				}
+
+				private Mono<PokerUserDetails> userToUserDetails(User user) {
+
+								Set<GrantedAuthority> roles = userAuthorities;
+								if (securitySettings.adminUsers.contains(user.getLoginId())) {
+												roles = adminAuthorities;
+								}
+								return Mono.just(new PokerUserDetails(user, roles));
+				}
 }

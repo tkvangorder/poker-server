@@ -9,26 +9,26 @@ import reactor.core.publisher.Flux;
 
 public class RSocketGameListener implements UserGameListener {
 
-	private final User user;
-	private final EmitterProcessor<GameEvent> emitter;
-	
-	public RSocketGameListener(User user) {
-		this.user = user;
-		this.emitter = EmitterProcessor.<GameEvent>create();
-	}
+				private final User user;
+				private final EmitterProcessor<GameEvent> emitter;
 
-	@Override
-	public User getUser() {
-		return user;
-	}
-	
-	@Override
-	public void gameEventPublished(GameEvent event) {
-		emitter.onNext(event);
-	}
-	
-	Flux<GameEvent> getEventStream() {
-		return emitter.log();
-	}
+				public RSocketGameListener(User user) {
+								this.user = user;
+								this.emitter = EmitterProcessor.<GameEvent>create();
+				}
+
+				@Override
+				public User getUser() {
+								return user;
+				}
+
+				@Override
+				public void gameEventPublished(GameEvent event) {
+								emitter.onNext(event);
+				}
+
+				Flux<GameEvent> getEventStream() {
+								return emitter.log();
+				}
 
 }

@@ -8,6 +8,6 @@ import lombok.Value;
  */
 @Value
 public class Blinds {
-	int smallBlind;
-	int bigBlind;
+				int smallBlind;
+				int bigBlind;
 }

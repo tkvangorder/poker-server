@@ -16,22 +16,22 @@ import java.util.List;
  */
 public class Deck {
 
-	private final List<Card> cards = new LinkedList<>();
+				private final List<Card> cards = new LinkedList<>();
 
-	public Deck() {
-		for (CardSuit suit : CardSuit.values()) {
-			for (CardValue value: CardValue.values()) {
-				cards.add(new Card(value, suit));
-			}
-		}
-		Collections.shuffle(cards);
-	}
+				public Deck() {
+								for (CardSuit suit : CardSuit.values()) {
+												for (CardValue value : CardValue.values()) {
+																cards.add(new Card(value, suit));
+												}
+								}
+								Collections.shuffle(cards);
+				}
 
-	public List<Card> drawCards(int numberOfCards) {
-		List<Card> drawnCards = new ArrayList<>(numberOfCards);
-		for (int index = 0; index < numberOfCards; index++) {
-			drawnCards.add(cards.remove(0));
-		}
-		return drawnCards;
-	}
+				public List<Card> drawCards(int numberOfCards) {
+								List<Card> drawnCards = new ArrayList<>(numberOfCards);
+								for (int index = 0; index < numberOfCards; index++) {
+												drawnCards.add(cards.remove(0));
+								}
+								return drawnCards;
+				}
 }

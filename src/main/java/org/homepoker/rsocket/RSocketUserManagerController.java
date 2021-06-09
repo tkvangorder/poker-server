@@ -14,41 +14,41 @@ import reactor.core.publisher.Mono;
 @Controller
 public class RSocketUserManagerController {
 
-	private final UserManager userManager;
-	
-	public RSocketUserManagerController(UserManager userManager) {
-		this.userManager = userManager;
-	}
+				private final UserManager userManager;
 
-	@MessageMapping(RSocketRoutes.ROUTE_USER_MANAGER_REGISTER_USER)
-	Mono<User> registerUser(User user) {
-		return userManager.registerUser(user);
-	}
+				public RSocketUserManagerController(UserManager userManager) {
+								this.userManager = userManager;
+				}
 
-	@MessageMapping(RSocketRoutes.ROUTE_USER_MANAGER_GET_USER)
-	Mono<User> getUser(String loginId) {
-		return userManager.getUser(loginId);
-	}
+				@MessageMapping(RSocketRoutes.ROUTE_USER_MANAGER_REGISTER_USER)
+				Mono<User> registerUser(User user) {
+								return userManager.registerUser(user);
+				}
 
-	@MessageMapping(RSocketRoutes.ROUTE_USER_MANAGER_FIND_USERS)
-	//For now, disabling authorization to make dev/testings easier.
-	//@PreAuthorize("hasRole('ROLE_ADMIN')")
-	Flux<User> findUsers(UserCriteria criteria) {
-		return userManager.findUsers(criteria);
-	}
-	
-	@MessageMapping(RSocketRoutes.ROUTE_USER_MANAGER_UPDATE_USER)
-	Mono<User> updateUser(UserInformationUpdate update) {
-		return userManager.updateUserInformation(update);
-	}
+				@MessageMapping(RSocketRoutes.ROUTE_USER_MANAGER_GET_USER)
+				Mono<User> getUser(String loginId) {
+								return userManager.getUser(loginId);
+				}
 
-	@MessageMapping(RSocketRoutes.ROUTE_USER_MANAGER_UPDATE_PASSWORD)
-	Mono<Void> updateUserPassword(UserPasswordChangeRequest passwordRequest) {
-		return userManager.updateUserPassword(passwordRequest);
-	}
-	
-	@MessageMapping(RSocketRoutes.ROUTE_USER_MANAGER_DELETE_USER)
-	Mono<Void> deleteUser(String loginId) {
-		return userManager.deleteUser(loginId);
-	}	
+				@MessageMapping(RSocketRoutes.ROUTE_USER_MANAGER_FIND_USERS)
+				//For now, disabling authorization to make dev/testings easier.
+				//@PreAuthorize("hasRole('ROLE_ADMIN')")
+				Flux<User> findUsers(UserCriteria criteria) {
+								return userManager.findUsers(criteria);
+				}
+
+				@MessageMapping(RSocketRoutes.ROUTE_USER_MANAGER_UPDATE_USER)
+				Mono<User> updateUser(UserInformationUpdate update) {
+								return userManager.updateUserInformation(update);
+				}
+
+				@MessageMapping(RSocketRoutes.ROUTE_USER_MANAGER_UPDATE_PASSWORD)
+				Mono<Void> updateUserPassword(UserPasswordChangeRequest passwordRequest) {
+								return userManager.updateUserPassword(passwordRequest);
+				}
+
+				@MessageMapping(RSocketRoutes.ROUTE_USER_MANAGER_DELETE_USER)
+				Mono<Void> deleteUser(String loginId) {
+								return userManager.deleteUser(loginId);
+				}
 }

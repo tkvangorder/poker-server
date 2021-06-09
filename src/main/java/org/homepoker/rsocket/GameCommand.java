@@ -6,7 +6,7 @@ import lombok.Value;
 
 @Value
 public class GameCommand {
-	
-	private String gameId;
-	private Command command;
+
+				private String gameId;
+				private Command command;
 }

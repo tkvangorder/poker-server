@@ -13,48 +13,47 @@ import org.homepoker.domain.user.User;
  */
 public interface Game {
 
-	/**
-	 * Unique Id of the game.
-	 */
-	public String getId();
-		
-	/**
-	 * A human readable name for the game.
-	 */
-	public String getName();
+				/**
+				 * Unique Id of the game.
+				 */
+				public String getId();
 
-	/**
-	 * This is a simple enumeration for the format: CASH or TOURNAMENT 
-	 * @return The game format.
-	 */
-	public GameFormat getGameFormat();
+				/**
+				 * A human readable name for the game.
+				 */
+				public String getName();
 
-	/**
-	 * What type of poker game? Texas Hold'em, Draw, etc.
-	 */
-	public GameType getGameType();
-	
-	/**
-	 * Current status of the game (useful when persisting the game to storage)
-	 */
-	public GameStatus getStatus();
+				/**
+				 * This is a simple enumeration for the format: CASH or TOURNAMENT 
+				 * @return The game format.
+				 */
+				public GameFormat getGameFormat();
 
-	/**
-	 * User that created/owns the game.
-	 */
-	public User getOwner();
+				/**
+				 * What type of poker game? Texas Hold'em, Draw, etc.
+				 */
+				public GameType getGameType();
 
-	/**
-	 * The players registered/participating in the game.
-	 */	
-	public Map<String,Player> getPlayers();
+				/**
+				 * Current status of the game (useful when persisting the game to storage)
+				 */
+				public GameStatus getStatus();
 
-	/**
-	 * A game may have multiple tables depending on how many players are registered/participating in the game.
-	 * Each table can hold up to nine players and as players come and go, the players may be moved to different tables.
-	 */
-	public List<Table> getTables();
+				/**
+				 * User that created/owns the game.
+				 */
+				public User getOwner();
 
-	
+				/**
+				 * The players registered/participating in the game.
+				 */	
+				public Map<String, Player> getPlayers();
+
+				/**
+				 * A game may have multiple tables depending on how many players are registered/participating in the game.
+				 * Each table can hold up to nine players and as players come and go, the players may be moved to different tables.
+				 */
+				public List<Table> getTables();
+
 
 }

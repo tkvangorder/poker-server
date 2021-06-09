@@ -13,23 +13,23 @@ import lombok.Data;
 @Builder
 public class Player {
 
-	/**
-	 * The user linked to this player.
-	 */
-	final User user;
+				/**
+				 * The user linked to this player.
+				 */
+				final User user;
 
-	/**
-	 * The player has been confirmed by the game manager and can be assigned a seat at table.
-	 */
-	boolean confirmed;
+				/**
+				 * The player has been confirmed by the game manager and can be assigned a seat at table.
+				 */
+				boolean confirmed;
 
-	/**
-	 * The player status to indicate if the player is active, away, or out.
-	 */
-	PlayerStatus status;
+				/**
+				 * The player status to indicate if the player is active, away, or out.
+				 */
+				PlayerStatus status;
 
-	/**
-	 * The player's current chip count
-	 */
-	Integer chipCount;
+				/**
+				 * The player's current chip count
+				 */
+				Integer chipCount;
 }

@@ -1,27 +1,27 @@
 package org.homepoker.domain.poker;
 
 public enum CardSuit {
-	CLUB('C'),
-	HEART('H'),
-	DIAMOND('D'),
-	SPADE('S');
+				CLUB('C'),
+				HEART('H'),
+				DIAMOND('D'),
+				SPADE('S');
 
-	private char value;
-	
-	private CardSuit(char value) {
-		this.value = value;
-	}
+				private char value;
 
-	public char getValue() {
-		return value;
-	}
+				private CardSuit(char value) {
+								this.value = value;
+				}
 
-	public static CardSuit valueToEnum(char value) {
-		for (CardSuit suit: values()) {
-			if (suit.value == value) {
-				return suit;
-			}
-		}
-		throw new  IllegalArgumentException("Unrecognized suit");
-	}
+				public char getValue() {
+								return value;
+				}
+
+				public static CardSuit valueToEnum(char value) {
+								for (CardSuit suit : values()) {
+												if (suit.value == value) {
+																return suit;
+												}
+								}
+								throw new  IllegalArgumentException("Unrecognized suit");
+				}
 }
