@@ -1,10 +1,7 @@
 package org.homepoker.game.cash;
 
 import org.homepoker.common.ValidationException;
-import org.homepoker.domain.game.*;
-import org.homepoker.domain.game.cash.CashGame;
-import org.homepoker.domain.game.cash.CashGameDetails;
-import org.homepoker.game.GameManager;
+import org.homepoker.game.*;
 import org.homepoker.user.UserManager;
 import org.jctools.maps.NonBlockingHashMap;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -40,23 +37,23 @@ public class CashGameServerImpl implements CashGameServer {
   public List<CashGameDetails> findGames(GameCriteria criteria) {
 
     if (criteria == null ||
-        (criteria.getStatus() == null && criteria.getStartDate() == null && criteria.getEndDate() == null)) {
+        (criteria.status() == null && criteria.startDate() == null && criteria.endDate() == null)) {
       //No criteria provided, return all games.
       return gameRepository.findAll().stream().map(CashGameServerImpl::gameToGameDetails).toList();
     }
 
     Criteria mongoCriteria = new Criteria();
 
-    if (criteria.getStatus() != null) {
-      mongoCriteria.and("status").is(criteria.getStatus());
+    if (criteria.status() != null) {
+      mongoCriteria.and("status").is(criteria.status());
     }
-    if (criteria.getStartDate() != null) {
-      mongoCriteria.and("startTimestamp").gte(criteria.getStartDate());
+    if (criteria.startDate() != null) {
+      mongoCriteria.and("startTimestamp").gte(criteria.startDate());
     }
-    if (criteria.getEndDate() != null) {
+    if (criteria.endDate() != null) {
       //The end date is intended to include any timestamp in that day, we just add one to the
       //day to insure we get all games on the end date.
-      mongoCriteria.and("endTimestamp").lte(criteria.getEndDate().plusDays(1));
+      mongoCriteria.and("endTimestamp").lte(criteria.endDate().plusDays(1));
     }
 
     return mongoOperations.query(CashGame.class)

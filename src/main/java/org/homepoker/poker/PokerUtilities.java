@@ -1,8 +1,5 @@
 package org.homepoker.poker;
 
-import org.homepoker.domain.poker.Card;
-import org.homepoker.domain.poker.CardSuit;
-import org.homepoker.domain.poker.CardValue;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 

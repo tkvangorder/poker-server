@@ -1,7 +1,6 @@
 package org.homepoker.game.cash;
 
-import org.homepoker.domain.game.Game;
-import org.homepoker.domain.game.cash.CashGame;
+import org.homepoker.game.Game;
 import org.homepoker.game.AbstractGameManagerImpl;
 
 public class CashGameManager extends AbstractGameManagerImpl {

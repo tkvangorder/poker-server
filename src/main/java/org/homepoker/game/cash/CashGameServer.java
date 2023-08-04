@@ -1,8 +1,7 @@
 package org.homepoker.game.cash;
 
 import org.homepoker.common.ValidationException;
-import org.homepoker.domain.game.GameCriteria;
-import org.homepoker.domain.game.cash.CashGameDetails;
+import org.homepoker.game.GameCriteria;
 import org.homepoker.game.GameManager;
 
 import java.util.List;

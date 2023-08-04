@@ -1,6 +1,6 @@
 package org.homepoker.security;
 
-import org.homepoker.domain.user.User;
+import org.homepoker.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

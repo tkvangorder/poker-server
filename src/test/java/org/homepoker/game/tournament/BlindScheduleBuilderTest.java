@@ -1,7 +1,5 @@
 package org.homepoker.game.tournament;
 
-import org.homepoker.domain.game.tournament.BlindSchedule;
-import org.homepoker.domain.game.tournament.Blinds;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

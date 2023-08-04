@@ -1,11 +1,6 @@
 package org.homepoker.poker;
 
 
-import org.homepoker.domain.poker.Card;
-import org.homepoker.domain.poker.CardValue;
-import org.homepoker.domain.poker.HandRank;
-import org.homepoker.domain.poker.HandResult;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,11 +17,11 @@ public class BitwisePokerRanker implements ClassicPokerRanker {
     int spades = 0;
     for (Card card : cards) {
 
-      switch (card.getSuit()) {
-        case CLUB -> clubs = clubs | card.getValue().getMask();
-        case DIAMOND -> diamonds = diamonds | card.getValue().getMask();
-        case HEART -> hearts = hearts | card.getValue().getMask();
-        case SPADE -> spades = spades | card.getValue().getMask();
+      switch (card.suit()) {
+        case CLUB -> clubs = clubs | card.value().getMask();
+        case DIAMOND -> diamonds = diamonds | card.value().getMask();
+        case HEART -> hearts = hearts | card.value().getMask();
+        case SPADE -> spades = spades | card.value().getMask();
         default -> {
         }
       }

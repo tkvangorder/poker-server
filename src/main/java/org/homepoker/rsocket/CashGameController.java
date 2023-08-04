@@ -1,8 +1,8 @@
 package org.homepoker.rsocket;
 
-import org.homepoker.common.Command;
-import org.homepoker.domain.game.GameCriteria;
-import org.homepoker.domain.game.cash.CashGameDetails;
+import org.homepoker.command.Command;
+import org.homepoker.game.GameCriteria;
+import org.homepoker.game.cash.CashGameDetails;
 import org.homepoker.game.cash.CashGameServer;
 import org.homepoker.security.PokerUserDetails;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

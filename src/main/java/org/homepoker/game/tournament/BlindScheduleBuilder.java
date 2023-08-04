@@ -1,8 +1,5 @@
 package org.homepoker.game.tournament;
 
-import org.homepoker.domain.game.tournament.BlindSchedule;
-import org.homepoker.domain.game.tournament.Blinds;
-
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;

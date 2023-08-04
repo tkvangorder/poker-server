@@ -1,8 +1,7 @@
 package org.homepoker.game;
 
-import org.homepoker.common.Command;
-import org.homepoker.domain.game.Game;
-import org.homepoker.domain.user.User;
+import org.homepoker.command.Command;
+import org.homepoker.user.User;
 import org.jctools.maps.NonBlockingHashMap;
 import org.jctools.queues.MessagePassingQueue;
 import org.jctools.queues.MpscLinkedQueue;
@@ -16,7 +15,7 @@ public abstract class AbstractGameManagerImpl implements GameManager {
    * This is a non-blocking queue that allows multiple threads to add commands to the queue and a single thread (the game loop thread) that will drain those commands.
    * The contract guarantee (multi-producers, one consumer) is defined by the implementation MpscLinkedQueue and the capacity is unbounded.
    * <p>
-   * The game loop thread is the only thread that will  drain the commands and manipulate the game state.
+   * The game loop thread is the only thread that will drain the commands and manipulate the game state.
    */
   MessagePassingQueue<Command> pendingCommands = new MpscLinkedQueue<>();
 

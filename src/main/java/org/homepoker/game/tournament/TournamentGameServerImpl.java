@@ -1,10 +1,10 @@
 package org.homepoker.game.tournament;
 
 import org.homepoker.common.ValidationException;
-import org.homepoker.domain.game.*;
-import org.homepoker.domain.game.tournament.TournamentGame;
-import org.homepoker.domain.game.tournament.TournamentGameDetails;
+import org.homepoker.game.GameCriteria;
 import org.homepoker.game.GameManager;
+import org.homepoker.game.GameStatus;
+import org.homepoker.game.GameType;
 import org.homepoker.user.UserManager;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -34,23 +34,23 @@ public class TournamentGameServerImpl implements TournamentGameServer {
   @Override
   public List<TournamentGameDetails> findGames(GameCriteria criteria) {
     if (criteria == null ||
-        (criteria.getStatus() == null && criteria.getStartDate() == null && criteria.getEndDate() == null)) {
+        (criteria.status() == null && criteria.startDate() == null && criteria.endDate() == null)) {
       //No criteria provided, return all games.
       return gameRepository.findAll().stream().map(TournamentGameServerImpl::gameToGameDetails).toList();
     }
 
     Criteria mongoCriteria = new Criteria();
 
-    if (criteria.getStatus() != null) {
-      mongoCriteria.and("status").is(criteria.getStatus());
+    if (criteria.status() != null) {
+      mongoCriteria.and("status").is(criteria.status());
     }
-    if (criteria.getStartDate() != null) {
-      mongoCriteria.and("startTimestamp").gte(criteria.getStartDate());
+    if (criteria.startDate() != null) {
+      mongoCriteria.and("startTimestamp").gte(criteria.startDate());
     }
-    if (criteria.getEndDate() != null) {
+    if (criteria.endDate() != null) {
       //The end date is intended to include any timestamp in that day, we just add one to the
       //day to insure we get all games on the end date.
-      mongoCriteria.and("endTimestamp").lte(criteria.getEndDate().plusDays(1));
+      mongoCriteria.and("endTimestamp").lte(criteria.endDate().plusDays(1));
     }
 
     return mongoOperations.query(TournamentGame.class)

@@ -1,6 +1,5 @@
 package org.homepoker.game.tournament;
 
-import org.homepoker.domain.game.tournament.TournamentGame;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

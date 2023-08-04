@@ -1,9 +1,9 @@
 package org.homepoker.rsocket;
 
-import org.homepoker.domain.user.User;
-import org.homepoker.domain.user.UserCriteria;
-import org.homepoker.domain.user.UserInformationUpdate;
-import org.homepoker.domain.user.UserPasswordChangeRequest;
+import org.homepoker.user.User;
+import org.homepoker.user.UserCriteria;
+import org.homepoker.user.UserInformationUpdate;
+import org.homepoker.user.UserPasswordChangeRequest;
 import org.homepoker.user.UserManager;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;

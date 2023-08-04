@@ -1,10 +1,5 @@
 package org.homepoker.user;
 
-import org.homepoker.domain.user.User;
-import org.homepoker.domain.user.UserCriteria;
-import org.homepoker.domain.user.UserInformationUpdate;
-import org.homepoker.domain.user.UserPasswordChangeRequest;
-
 import java.util.List;
 
 public interface UserManager {

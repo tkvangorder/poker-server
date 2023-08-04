@@ -1,7 +1,7 @@
 package org.homepoker.rsocket;
 
 import lombok.Value;
-import org.homepoker.common.Command;
+import org.homepoker.command.Command;
 
 @Value
 public class GameCommand {

@@ -1,10 +1,6 @@
 package org.homepoker.user;
 
 import org.homepoker.common.ValidationException;
-import org.homepoker.domain.user.User;
-import org.homepoker.domain.user.UserCriteria;
-import org.homepoker.domain.user.UserInformationUpdate;
-import org.homepoker.domain.user.UserPasswordChangeRequest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoOperations;

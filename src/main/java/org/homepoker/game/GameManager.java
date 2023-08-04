@@ -1,7 +1,7 @@
 package org.homepoker.game;
 
-import org.homepoker.common.Command;
-import org.homepoker.domain.user.User;
+import org.homepoker.command.Command;
+import org.homepoker.user.User;
 
 import java.util.Optional;
 
