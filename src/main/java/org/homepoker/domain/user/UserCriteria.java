@@ -4,6 +4,6 @@ import lombok.Value;
 
 @Value
 public class UserCriteria {
-	String userLoginId;
-	String userEmail;	
+  String userLoginId;
+  String userEmail;
 }
