@@ -1,12 +1,10 @@
 package org.homepoker.rsocket;
 
-import org.homepoker.common.Command;
-
 import lombok.Value;
+import org.homepoker.common.Command;
 
 @Value
 public class GameCommand {
-	
-	private String gameId;
-	private Command command;
+  String gameId;
+  Command command;
 }

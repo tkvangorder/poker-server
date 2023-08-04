@@ -11,39 +11,38 @@ import lombok.NoArgsConstructor;
 @Builder
 public class User {
 
-	/**
-	 * Internally assigned unique key used for persistence.
-	 */
-	String id;
+  /**
+   * Internally assigned unique key used for persistence.
+   */
+  String id;
 
-	/**
-	 * The user ID chosen by the user. (Immutable, the only way to change this is to delete the user and then recreate)
-	 */
-	String loginId;
-	
-	/**
-	 * User's password, always encrypted.
-	 */
-	String password;
+  /**
+   * The user ID chosen by the user. (Immutable, the only way to change this is to delete the user and then recreate)
+   */
+  String loginId;
 
-	/**
-	 * User's email, also used as the login ID.
-	 */
-	String email;
+  /**
+   * User's password, always encrypted.
+   */
+  String password;
 
-	/**
-	 * User's preferred alias when in a game or at a table.
-	 */
-	String alias;
+  /**
+   * User's email, also used as the login ID.
+   */
+  String email;
 
-	/**
-	 * User's "real" name.
-	 */
-	String name;
+  /**
+   * User's preferred alias when in a game or at a table.
+   */
+  String alias;
 
-	/**
-	 * Phone number can be useful when organizing a remote game.
-	 */
-	String phone;
+  /**
+   * User's "real" name.
+   */
+  String name;
 
+  /**
+   * Phone number can be useful when organizing a remote game.
+   */
+  String phone;
 }
