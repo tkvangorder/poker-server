@@ -1,6 +1,6 @@
 package org.homepoker.command;
 
-import lombok.Value;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.With;
 import org.homepoker.user.User;
 import org.springframework.util.Assert;
@@ -15,13 +15,8 @@ import java.util.Map;
  *
  * @author tyler.vangorder
  */
-@Value
 @With
-public class Command {
-
-  CommandId commandId;
-  User user;
-  Map<String, String> payload;
+public record GameCommand(CommandId commandId, String gameId, Map<String, String> payload, @JsonIgnore User user) {
 
   /**
    * Create a {@link CommandId#REGISTER_USER} command.
@@ -34,13 +29,15 @@ public class Command {
    * @param user The user that is registering the player.
    * @return command
    */
-  public static Command asRegisterUser(User user) {
+  public static GameCommand asRegisterUser(User user, String gameId) {
     Assert.notNull(user, "The user is required when registering for a game.");
     Assert.hasText(user.getLoginId(), "The user's loginId is required when registering for a game.");
-    return new Command(
+    return new GameCommand(
         CommandId.REGISTER_USER,
-        user,
-        Map.of("loginId", user.getLoginId()));
+        gameId,
+        Map.of("loginId", user.getLoginId()),
+        user
+    );
   }
 
   /**
@@ -52,14 +49,16 @@ public class Command {
    * @param user The user that is being confirmed for the game.
    * @return Confirm player command;
    */
-  public static Command confirmUser(User user, String loginId) {
+  public static GameCommand confirmUser(User user, String gameId, String loginId) {
     Assert.notNull(user, "The user that is confirming the login ID is required.");
     Assert.hasText(user.getLoginId(), "The user's that is confirming the login ID is required.");
     Assert.hasText(loginId, "The login ID for the user being confirmed is required.");
 
-    return new Command(
+    return new GameCommand(
         CommandId.CONFIRM_USER,
-        user,
-        Map.of("loginId", loginId));
+        gameId,
+        Map.of("loginId", loginId),
+        user
+    );
   }
 }

@@ -22,7 +22,7 @@ public interface CashGameServer {
    * @param gameId The game Id
    * @return A game manager for the game or an error if the game does not exist.
    */
-  GameManager getGameManger(String gameId);
+  GameManager<CashGame> getGameManger(String gameId);
 
   /**
    * Create/schedule a new game.
@@ -52,7 +52,6 @@ public interface CashGameServer {
    * @throws ValidationException If the game does not exist or a validation error occurs
    */
   CashGameDetails getGameDetails(String gameId);
-
 
   /**
    * Delete an existing game.

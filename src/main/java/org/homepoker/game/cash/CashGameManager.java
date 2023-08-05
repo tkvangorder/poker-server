@@ -1,9 +1,8 @@
 package org.homepoker.game.cash;
 
-import org.homepoker.game.Game;
-import org.homepoker.game.AbstractGameManagerImpl;
+import org.homepoker.game.GameManager;
 
-public class CashGameManager extends AbstractGameManagerImpl {
+public class CashGameManager extends GameManager<CashGame> {
 
   private final CashGame game;
 
@@ -12,7 +11,7 @@ public class CashGameManager extends AbstractGameManagerImpl {
   }
 
   @Override
-  protected Game getGame() {
+  protected CashGame getGame() {
     return game;
   }
 }

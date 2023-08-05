@@ -1,6 +1,6 @@
 package org.homepoker.rsocket;
 
-import org.homepoker.command.Command;
+import org.homepoker.command.GameCommand;
 import org.homepoker.game.GameCriteria;
 import org.homepoker.game.cash.CashGameDetails;
 import org.homepoker.game.cash.CashGameServer;
@@ -37,7 +37,7 @@ public class CashGameController {
   }
 
   void registerForGame(String gameId, @AuthenticationPrincipal PokerUserDetails user) {
-    gameServer.getGameManger(gameId).submitCommand(Command.asRegisterUser(user));
+    gameServer.getGameManger(gameId).submitCommand(GameCommand.asRegisterUser(user, gameId));
   }
 
   void joinGame(final String gameId, @AuthenticationPrincipal PokerUserDetails user) {
@@ -45,6 +45,6 @@ public class CashGameController {
   }
 
   void gameCommand(GameCommand command, @AuthenticationPrincipal PokerUserDetails user) {
-    gameServer.getGameManger(command.getGameId()).submitCommand(command.getCommand().withUser(user));
+    gameServer.getGameManger(command.gameId()).submitCommand(command.withUser(user));
   }
 }
