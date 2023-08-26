@@ -1,4 +1,4 @@
-package org.homepoker.rsocket;
+package org.homepoker.websocket;
 
 import org.homepoker.user.User;
 import org.homepoker.user.UserCriteria;
@@ -19,27 +19,32 @@ public class UserManagerController {
     this.userManager = userManager;
   }
 
+  @MessageMapping("/user/register")
   User registerUser(User user) {
     return userManager.registerUser(user);
   }
 
+  @MessageMapping("/user/get")
   User getUser(String loginId) {
     return userManager.getUser(loginId);
   }
 
+  @MessageMapping("/user/find")
   List<User> findUsers(UserCriteria criteria) {
     return userManager.findUsers(criteria);
   }
 
+  @MessageMapping("/user/update")
   User updateUser(UserInformationUpdate update) {
     return userManager.updateUserInformation(update);
   }
 
+  @MessageMapping("/user/update-password")
   void updateUserPassword(UserPasswordChangeRequest passwordRequest) {
     userManager.updateUserPassword(passwordRequest);
   }
 
-  @MessageMapping(MessageRoutes.ROUTE_USER_MANAGER_DELETE_USER)
+  @MessageMapping("/user/delete")
   void deleteUser(String loginId) {
     userManager.deleteUser(loginId);
   }

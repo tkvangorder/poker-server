@@ -21,10 +21,10 @@ public class MongoUserDetailsService implements UserDetailsService {
   private static final Set<GrantedAuthority> userAuthorities = Set.of(new SimpleGrantedAuthority("ROLE_USER"));
 
   private final UserRepository userRepository;
-  private final SecuritySettings securitySettings;
+  private final PokerSecurityProperties securitySettings;
 
 
-  public MongoUserDetailsService(UserRepository userRepository, SecuritySettings securitySettings) {
+  public MongoUserDetailsService(UserRepository userRepository, PokerSecurityProperties securitySettings) {
     this.userRepository = userRepository;
     this.securitySettings = securitySettings;
   }
@@ -38,7 +38,7 @@ public class MongoUserDetailsService implements UserDetailsService {
   private PokerUserDetails userToUserDetails(User user) {
 
     Set<GrantedAuthority> roles = userAuthorities;
-    if (securitySettings.adminUsers.contains(user.getLoginId())) {
+    if (securitySettings.getAdminUsers().contains(user.getLoginId())) {
       roles = adminAuthorities;
     }
     return new PokerUserDetails(user, roles);
